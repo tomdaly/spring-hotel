@@ -1,4 +1,8 @@
 # spring-hotel
+![Travis (.com) branch](https://img.shields.io/travis/com/tomdaly/spring-hotel/master)
+![Codecov branch](https://img.shields.io/codecov/c/github/tomdaly/spring-hotel/master)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/tomdaly/spring-hotel)
+[![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
 A demo project to learn Spring
 
