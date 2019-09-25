@@ -30,14 +30,16 @@
     </div>
     <div>
         <h2>Reservation Result</h2>
-        <p th:text="${reservation.lastName} != null ? 'Name: ' + ${reservation.lastName} + ', ' + ${reservation.firstName} : 'Guest not found: could not complete reservation'"/>
-        <p th:text="${reservation.lastName} != null ? 'Date: ' + ${reservation.date} : ''"/>
-        <p th:text="${reservation.lastName} != null ? 'Room Number: ' + ${reservation.roomNumber} : ''"/>
-        <p th:text="${reservation.lastName} != null ? 'Reservation ID: ' + ${reservation.guestId} + ${reservation.roomId} : ''"/>
+        <div th:if="${reservation} != null and ${reservation.lastName} != null">
+            <p th:text="'Name: ' + ${reservation.lastName} + ', ' + ${reservation.firstName}"/>
+            <p th:text="'Date: ' + ${reservation.date}"/>
+            <p th:text="'Room Number: ' + ${reservation.roomNumber}"/>
+            <p th:text="'Reservation ID: ' + ${reservation.guestId} + ${reservation.roomId}"/>
+        </div>
+        <div th:if="${reservation} == null or ${reservation.lastName} == null">
+            <p>Could not add reservation</p>
+        </div>
         <br>
-        <a th:if="${reservation.lastName} == null" href="/guests/add">
-            <button type="button" class="btn btn-primary">Add guest</button>
-        </a>
         <a href="/reservations">
             <button type="button" class="btn btn-primary">Back to reservations page</button>
         </a>

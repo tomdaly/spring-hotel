@@ -30,7 +30,7 @@ public class ReservationControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @Test
-  public void getReservations() throws Exception {
+  public void testGetReservations_shouldReturnCorrectReservationsForDate() throws Exception {
     List<RoomReservation> mockReservationList = new ArrayList<>();
     RoomReservation mockReservation = createMockRoomReservation();
     mockReservationList.add(mockReservation);
@@ -44,7 +44,7 @@ public class ReservationControllerTest {
   }
 
   @Test
-  public void addReservation_post() throws Exception {
+  public void testAddReservation_shouldReturnCorrectRoomReservation() throws Exception {
     RoomReservation mockReservation = createMockRoomReservation();
 
     given(reservationService.addReservation("Foo", "Bar", "2019-01-01"))
@@ -58,5 +58,29 @@ public class ReservationControllerTest {
                         "firstName", "Foo", "lastName", "Bar", "date", "2019-01-01")))
         .andExpect(status().isFound())
         .andExpect(flash().attribute("reservation", mockReservation));
+  }
+
+  @Test
+  public void testGetReservations_shouldReturnCorrectHtmlPage() throws Exception {
+    this.mockMvc
+        .perform(get("/reservations/"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("Welcome to the Reservations Page")));
+  }
+
+  @Test
+  public void testAddReservationGet_shouldReturnCorrectHtmlPage() throws Exception {
+    this.mockMvc
+        .perform(get("/reservations/add/"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("Add Reservation")));
+  }
+
+  @Test
+  public void testAddReservationResultGet_shouldReturnCorrectHtmlPage() throws Exception {
+    this.mockMvc
+        .perform(get("/reservations/add/result"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("Result")));
   }
 }

@@ -30,8 +30,6 @@ public class ReservationController {
 
   @RequestMapping(method = RequestMethod.GET, value = "/add")
   public String addReservationGet(Model model) {
-    model.addAttribute("newReservation", new RoomReservation());
-
     return "reservations_add";
   }
 
