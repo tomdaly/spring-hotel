@@ -26,14 +26,6 @@ public class GuestServiceTest {
   }
 
   @Test
-  public void testFindGuest_shouldReturnCorrectGuest() {
-    Guest mockGuest = createMockGuest();
-    given(guestRepository.findByFirstNameAndLastNameIgnoreCase("Foo", "Bar")).willReturn(mockGuest);
-
-    assertThat(guestService.findGuest("Foo", "Bar"), is(equalTo(mockGuest)));
-  }
-
-  @Test
   public void testAddGuest_shouldReturnNewGuestWithCorrectDetails() {
     Guest mockGuest = createMockGuest();
     mockGuest.setId(
@@ -42,6 +34,24 @@ public class GuestServiceTest {
         guestService.addGuest(
             "Foo", "Bar", "foo@bar.com", "42 Wallaby Way", "Australia", "Sydney", "1234567890"),
         is(equalTo(mockGuest)));
+  }
+
+  @Test
+  public void testAddGuest_shouldReturnExistingGuestIfGuestExists() {
+    Guest mockGuest = createMockGuest();
+    given(guestRepository.findByFirstNameAndLastNameIgnoreCase("Foo", "Bar")).willReturn(mockGuest);
+    assertThat(
+        guestService.addGuest(
+            "Foo", "Bar", "foo@bar.com", "42 Wallaby Way", "Australia", "Sydney", "1234567890"),
+        is(equalTo(mockGuest)));
+  }
+
+  @Test
+  public void testFindGuest_shouldReturnCorrectGuest() {
+    Guest mockGuest = createMockGuest();
+    given(guestRepository.findByFirstNameAndLastNameIgnoreCase("Foo", "Bar")).willReturn(mockGuest);
+
+    assertThat(guestService.findGuest("Foo", "Bar"), is(equalTo(mockGuest)));
   }
 
   @Test

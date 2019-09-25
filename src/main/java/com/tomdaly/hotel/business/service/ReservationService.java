@@ -39,12 +39,15 @@ public class ReservationService {
   public RoomReservation addReservation(String firstName, String lastName, String dateString) {
     Guest bookingGuest =
         this.guestRepository.findByFirstNameAndLastNameIgnoreCase(firstName, lastName);
-    if (bookingGuest.getFirstName() == null) {
+      if (bookingGuest == null || bookingGuest.getFirstName() == null) {
       return new RoomReservation();
     }
 
     Date reservationDate = createDateFromDateString(dateString);
     Room roomToReserve = findAvailableRoom(reservationDate);
+    if (roomToReserve.getName() == null) {
+      return new RoomReservation();
+    }
     RoomReservation roomReservation =
         createRoomReservationForDate(roomToReserve, reservationDate, bookingGuest);
     saveReservation(roomReservation);
@@ -74,7 +77,7 @@ public class ReservationService {
       } else {
         roomFound = true;
       }
-    } while (!roomFound && roomIterator.hasNext());
+    } while (!roomFound);
     if (!roomFound) {
       return new Room();
     }
