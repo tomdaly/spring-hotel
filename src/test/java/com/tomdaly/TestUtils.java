@@ -39,12 +39,9 @@ public class TestUtils {
 
   public static RoomReservation createMockRoomReservation() throws Exception {
     Date date = DATE_FORMAT.parse("2019-01-01");
-    RoomReservation mockRoomReservation = new RoomReservation();
+    RoomReservation mockRoomReservation = new RoomReservation(1, 1, date);
     mockRoomReservation.setLastName("Bar");
     mockRoomReservation.setFirstName("Foo");
-    mockRoomReservation.setDate(date);
-    mockRoomReservation.setGuestId(1);
-    mockRoomReservation.setRoomId(1);
     mockRoomReservation.setRoomNumber("J1");
     mockRoomReservation.setRoomName("JUnit Test Room");
     return mockRoomReservation;
@@ -53,19 +50,14 @@ public class TestUtils {
   public static Reservation createMockReservation() throws Exception {
     String dateString = "2019-01-01";
     Date testDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
-    Reservation mockReservation = new Reservation();
-    mockReservation.setRoomId(1);
-    mockReservation.setGuestId(1);
+    Reservation mockReservation = new Reservation(1, 1, new java.sql.Date(testDate.getTime()));
     mockReservation.setId(1);
-    mockReservation.setDate(new java.sql.Date(testDate.getTime()));
     return mockReservation;
   }
 
   public static Guest createMockGuest() {
-    Guest mockGuest = new Guest();
+    Guest mockGuest = new Guest("Foo", "Bar");
     mockGuest.setId(1);
-    mockGuest.setFirstName("Foo");
-    mockGuest.setLastName("Bar");
     mockGuest.setEmailAddress("foo@bar.com");
     mockGuest.setAddress("42 Wallaby Way");
     mockGuest.setCountry("Australia");
@@ -76,11 +68,9 @@ public class TestUtils {
   }
 
   public static Room createMockRoom() {
-    Room mockRoom = new Room();
+    Room mockRoom = new Room("JUnit Test Room", "J1");
     mockRoom.setId(1);
     mockRoom.setBedInfo("Q");
-    mockRoom.setNumber("J1");
-    mockRoom.setName("JUnit Test Room");
     return mockRoom;
   }
 }

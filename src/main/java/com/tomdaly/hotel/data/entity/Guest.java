@@ -12,10 +12,10 @@ public class Guest {
   private long id;
 
   @Column(name = "FIRST_NAME")
-  private String firstName;
+  private final String firstName;
 
   @Column(name = "LAST_NAME")
-  private String lastName;
+  private final String lastName;
 
   @Column(name = "EMAIL_ADDRESS")
   private String emailAddress;
@@ -32,6 +32,16 @@ public class Guest {
   @Column(name = "PHONE_NUMBER")
   private String phoneNumber;
 
+  public Guest() {
+    this.firstName = "";
+    this.lastName = "";
+  }
+
+  public Guest(String firstName, String lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+
   public long getId() {
     return id;
   }
@@ -44,16 +54,8 @@ public class Guest {
     return firstName;
   }
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
-
   public String getLastName() {
     return lastName;
-  }
-
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
   }
 
   public String getEmailAddress() {
@@ -128,21 +130,15 @@ public class Guest {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Guest guest = (Guest) o;
-    return id == guest.id
-        && Objects.equals(firstName, guest.firstName)
-        && Objects.equals(lastName, guest.lastName)
-        && Objects.equals(emailAddress, guest.emailAddress)
-        && Objects.equals(address, guest.address)
-        && Objects.equals(country, guest.country)
-        && Objects.equals(state, guest.state)
-        && Objects.equals(phoneNumber, guest.phoneNumber);
+    if (!(o instanceof Guest)) return false;
+    Guest that = (Guest) o;
+    return
+        Objects.equals(firstName, that.firstName)
+        && Objects.equals(lastName, that.lastName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(
-        id, firstName, lastName, emailAddress, address, country, state, phoneNumber);
+    return Objects.hash(firstName, lastName);
   }
 }

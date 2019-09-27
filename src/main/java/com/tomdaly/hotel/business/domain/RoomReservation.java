@@ -4,28 +4,36 @@ import java.util.Date;
 import java.util.Objects;
 
 public class RoomReservation {
-  private long roomId;
-  private long guestId;
+  final private long roomId;
+  final private long guestId;
+  final private Date date;
   private String roomName;
   private String roomNumber;
   private String firstName;
   private String lastName;
-  private Date date;
+
+  public RoomReservation() {
+    this.roomId = 0;
+    this.guestId = 0;
+    this.date = new Date();
+  }
+
+  public RoomReservation(long roomId, long guestId, Date date) {
+    this.roomId = roomId;
+    this.guestId = guestId;
+    this.date = date;
+  }
 
   public long getRoomId() {
     return roomId;
-  }
-
-  public void setRoomId(long roomId) {
-    this.roomId = roomId;
   }
 
   public long getGuestId() {
     return guestId;
   }
 
-  public void setGuestId(long guestId) {
-    this.guestId = guestId;
+  public Date getDate() {
+    return date;
   }
 
   public String getRoomName() {
@@ -60,14 +68,6 @@ public class RoomReservation {
     this.lastName = lastName;
   }
 
-  public Date getDate() {
-    return date;
-  }
-
-  public void setDate(Date date) {
-    this.date = date;
-  }
-
   @Override
   public String toString() {
     return "RoomReservation{"
@@ -93,21 +93,17 @@ public class RoomReservation {
   }
 
   @Override
-  public boolean equals(Object o) {
+  final public boolean equals(Object o) {
     if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (!(o instanceof RoomReservation)) return false;
     RoomReservation that = (RoomReservation) o;
     return roomId == that.roomId
         && guestId == that.guestId
-        && Objects.equals(roomName, that.roomName)
-        && Objects.equals(roomNumber, that.roomNumber)
-        && Objects.equals(firstName, that.firstName)
-        && Objects.equals(lastName, that.lastName)
         && Objects.equals(date, that.date);
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(roomId, guestId, roomName, roomNumber, firstName, lastName, date);
+  final public int hashCode() {
+    return Objects.hash(roomId, guestId, date);
   }
 }
