@@ -20,7 +20,7 @@
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
-            <a class="navbar-brand" href="/reservations">Spring Hotel - Guests</a>
+            <a class="navbar-brand" href="/">Spring Hotel - Guests</a>
         </div>
     </div>
 </nav>
@@ -31,7 +31,7 @@
     </div>
     <div>
         <h2>Result</h2>
-        <div th:if="${guest} != null and ${guest.lastName} != null">
+        <div th:if="${guest} != null and ${guest.lastName} != ''">
             <p th:text="'ID: ' + ${guest.id}"/>
             <p th:text="'Name: ' + ${guest.lastName} + ', ' + ${guest.firstName}"/>
             <p th:text="'Email: ' + ${guest.emailAddress}"/>
@@ -41,7 +41,7 @@
             <p th:text="'Phone Number: ' + ${guest.phoneNumber}"/>
             <br>
         </div>
-        <div th:if="${guest} == null or ${guest.lastName} == null">
+        <div th:if="${guest} == null or ${guest.lastName} == ''">
             <p>Guest not found</p>
         </div>
         <br>
