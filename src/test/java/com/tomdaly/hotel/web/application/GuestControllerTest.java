@@ -93,7 +93,6 @@ public class GuestControllerTest {
         .andExpect(flash().attribute("deleteMessage", "Guest 'Foo Bar' deleted"));
   }
 
-  // todo could check HTML response, thymeleaf tags may break check
   @Test
   public void testWelcomePage_shouldReturnCorrectHtmlPage() throws Exception {
     this.mockMvc

@@ -46,17 +46,17 @@ public class ReservationServiceTest {
 
     List<Room> mockRoomList = new ArrayList<>();
     Room mockRoomOne = createMockRoom();
-    Room mockRoomTwo = createMockRoom();
+    Room mockRoomTwo = new Room("JUnit Test Room 2", "J2");
+    mockRoomTwo.setBedInfo("Q1");
     mockRoomTwo.setId(2);
-    mockRoomTwo.setNumber("J2");
-    mockRoomTwo.setName("JUnit Test Room 2");
     mockRoomList.add(mockRoomOne);
     mockRoomList.add(mockRoomTwo);
     List<Reservation> mockReservationList = new ArrayList<>();
     mockReservationList.add(createMockReservation());
     Guest mockGuest = createMockGuest();
-    RoomReservation expectedRoomReservation = createMockRoomReservation();
-    expectedRoomReservation.setRoomId(2);
+    RoomReservation expectedRoomReservation = new RoomReservation(2, 1, testDate);
+    expectedRoomReservation.setFirstName("Foo");
+    expectedRoomReservation.setLastName("Bar");
     expectedRoomReservation.setRoomNumber("J2");
     expectedRoomReservation.setRoomName("JUnit Test Room 2");
 
@@ -70,9 +70,10 @@ public class ReservationServiceTest {
   }
 
   @Test
-  public void testAddReservation_shouldReturnEmptyReservationIfGuestNonexistent() {
+  public void testAddReservation_shouldReturnEmptyReservationIfGuestNonexistent() throws Exception {
+    Date testDate = new SimpleDateFormat("yyyy-MM-dd").parse("2019-01-01");
     Guest mockGuest = new Guest();
-    RoomReservation expectedRoomReservation = new RoomReservation();
+    RoomReservation expectedRoomReservation = new RoomReservation(0, 0, testDate);
     given(guestRepository.findByFirstNameAndLastNameIgnoreCase("Foo", "Bar")).willReturn(mockGuest);
     assertThat(
         reservationService.addReservation("Foo", "Bar", "2019-01-01"),
@@ -88,7 +89,7 @@ public class ReservationServiceTest {
     List<Reservation> mockReservationList = new ArrayList<>();
     mockReservationList.add(createMockReservation());
     Guest mockGuest = createMockGuest();
-    RoomReservation expectedRoomReservation = new RoomReservation();
+    RoomReservation expectedRoomReservation = new RoomReservation(0, 1, testDate);
 
     given(reservationRepository.findByDate(new java.sql.Date(testDate.getTime())))
         .willReturn(mockReservationList);

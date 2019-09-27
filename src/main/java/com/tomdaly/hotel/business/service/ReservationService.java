@@ -61,6 +61,9 @@ public class ReservationService {
         this.reservationRepository.findByDate(new java.sql.Date(reservationDate.getTime()));
     Iterator<Room> roomIterator = rooms.iterator();
 
+    if (!roomIterator.hasNext()) {
+      return new Room();
+    }
     Room roomToReserve = roomIterator.next();
     boolean roomFound = false;
     do {
@@ -85,22 +88,16 @@ public class ReservationService {
   }
 
   private RoomReservation createRoomReservationForDate(Room room, Date date, Guest guest) {
-    RoomReservation newRoomReservation = new RoomReservation();
-    newRoomReservation.setRoomId(room.getId());
+    RoomReservation newRoomReservation = new RoomReservation(room.getId(), guest.getId(), date);
     newRoomReservation.setRoomName(room.getName());
     newRoomReservation.setRoomNumber(room.getNumber());
-    newRoomReservation.setDate(date);
-    newRoomReservation.setGuestId(guest.getId());
     newRoomReservation.setFirstName(guest.getFirstName());
     newRoomReservation.setLastName(guest.getLastName());
     return newRoomReservation;
   }
 
   private void saveReservation(RoomReservation roomReservation) {
-    Reservation reservationToSave = new Reservation();
-    reservationToSave.setGuestId(roomReservation.getGuestId());
-    reservationToSave.setRoomId(roomReservation.getRoomId());
-    reservationToSave.setDate(new java.sql.Date(roomReservation.getDate().getTime()));
+    Reservation reservationToSave = new Reservation(roomReservation.getRoomId(), roomReservation.getGuestId(), new java.sql.Date(roomReservation.getDate().getTime()));
     this.reservationRepository.save(reservationToSave);
   }
 
@@ -108,9 +105,7 @@ public class ReservationService {
   public List<RoomReservation> getRoomReservationsForDate(String dateString) {
     Date date = createDateFromDateString(dateString);
 
-    Map<Long, RoomReservation> roomReservationMap = new HashMap<>();
-    roomReservationMap = fillReservationMapWithRoomDetails(roomReservationMap);
-    roomReservationMap = fillReservationMapWithGuestDetails(roomReservationMap, date);
+    Map<Long, RoomReservation> roomReservationMap = createAndFillRoomReservationMap(date);
 
     // convert map to list to return
     List<RoomReservation> roomReservations = new ArrayList<>();
@@ -120,20 +115,50 @@ public class ReservationService {
     return roomReservations;
   }
 
-  private Map<Long, RoomReservation> fillReservationMapWithRoomDetails(
-      Map<Long, RoomReservation> reservationMap) {
-    Iterable<Room> rooms = this.roomRepository.findAll();
+  private Map<Long, RoomReservation> createAndFillRoomReservationMap(Date date) {
     Map<Long, RoomReservation> roomReservationMap = new HashMap<>();
-    rooms.forEach(
-        room -> {
-          RoomReservation roomReservation = new RoomReservation();
-          roomReservation.setRoomId(room.getId());
-          roomReservation.setRoomName(room.getName());
-          roomReservation.setRoomNumber(room.getNumber());
-          roomReservationMap.put(room.getId(), roomReservation);
-        });
+
+    Iterable<Room> rooms = this.roomRepository.findAll();
+    Iterable<Reservation> reservationsOnDate =
+            this.reservationRepository.findByDate(new java.sql.Date(date.getTime()));
+    if (reservationsOnDate != null) {
+      reservationsOnDate.forEach(reservation -> {
+          Optional<Guest> guestResponse = this.guestRepository.findById(reservation.getGuestId());
+          if (guestResponse.isPresent()) {
+              Guest guest = guestResponse.get();
+            RoomReservation roomReservation = new RoomReservation(reservation.getRoomId(), guest.getId(), date);
+            roomReservation.setFirstName(guest.getFirstName());
+            roomReservation.setLastName(guest.getLastName());
+            roomReservationMap.put(reservation.getRoomId(), roomReservation);
+          }
+      });
+    }
+    if (rooms != null) {
+      rooms.forEach(room -> {
+        RoomReservation roomReservation;
+          if ((roomReservation = roomReservationMap.get(room.getId())) != null) {
+            roomReservation.setRoomName(room.getName());
+            roomReservation.setRoomNumber(room.getNumber());
+          }
+      });
+    }
     return roomReservationMap;
   }
+
+  /*
+  private Map<Long, RoomReservation> fillReservationMapWithRoomDetails(
+          Map<Long, RoomReservation> roomReservationMap) {
+    Iterable<Room> rooms = this.roomRepository.findAll();
+    rooms.forEach(
+            room -> {
+              RoomReservation roomReservation = new RoomReservation();
+              roomReservation.setRoomName(room.getName());
+              roomReservation.setRoomNumber(room.getNumber());
+              roomReservationMap.put(room.getId(), roomReservation);
+            });
+    return roomReservationMap;
+  }
+
 
   private Map<Long, RoomReservation> fillReservationMapWithGuestDetails(
       Map<Long, RoomReservation> reservationMap, Date date) {
@@ -157,6 +182,7 @@ public class ReservationService {
     }
     return reservationMap;
   }
+   */
 
   private Date createDateFromDateString(String dateString) {
     Date date;
