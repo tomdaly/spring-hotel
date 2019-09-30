@@ -1,7 +1,7 @@
 package com.tomdaly.hotel.data.entity;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -14,21 +14,21 @@ public class Reservation {
   private long id;
 
   @Column(name = "ROOM_ID")
-  final private long roomId;
+  private final long roomId;
 
   @Column(name = "GUEST_ID")
-  final private long guestId;
+  private final long guestId;
 
   @Column(name = "RES_DATE")
-  final private Date date;
+  private final java.sql.Date date;
 
   public Reservation() {
     this.roomId = 0;
     this.guestId = 0;
-    this.date = new Date(new java.util.Date().getTime());
+    this.date = java.sql.Date.valueOf(LocalDate.now());
   }
 
-  public Reservation(long roomId, long guestId, Date date) {
+  public Reservation(long roomId, long guestId, java.sql.Date date) {
     this.roomId = roomId;
     this.guestId = guestId;
     this.date = date;
@@ -50,7 +50,7 @@ public class Reservation {
     return guestId;
   }
 
-  public Date getDate() {
+  public java.sql.Date getDate() {
     return date;
   }
 
@@ -73,10 +73,7 @@ public class Reservation {
     if (this == o) return true;
     if (!(o instanceof Reservation)) return false;
     Reservation that = (Reservation) o;
-    return
-        roomId == that.roomId
-        && guestId == that.guestId
-        && Objects.equals(date, that.date);
+    return roomId == that.roomId && guestId == that.guestId && Objects.equals(date, that.date);
   }
 
   @Override

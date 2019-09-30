@@ -1,12 +1,12 @@
 package com.tomdaly.hotel.business.domain;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class RoomReservation {
-  final private long roomId;
-  final private long guestId;
-  final private Date date;
+  private final long roomId;
+  private final long guestId;
+  private final LocalDate date;
   private String roomName;
   private String roomNumber;
   private String firstName;
@@ -15,10 +15,10 @@ public class RoomReservation {
   public RoomReservation() {
     this.roomId = 0;
     this.guestId = 0;
-    this.date = new Date();
+    this.date = LocalDate.now();
   }
 
-  public RoomReservation(long roomId, long guestId, Date date) {
+  public RoomReservation(long roomId, long guestId, LocalDate date) {
     this.roomId = roomId;
     this.guestId = guestId;
     this.date = date;
@@ -32,7 +32,7 @@ public class RoomReservation {
     return guestId;
   }
 
-  public Date getDate() {
+  public LocalDate getDate() {
     return date;
   }
 
@@ -93,17 +93,15 @@ public class RoomReservation {
   }
 
   @Override
-  final public boolean equals(Object o) {
+  public final boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof RoomReservation)) return false;
     RoomReservation that = (RoomReservation) o;
-    return roomId == that.roomId
-        && guestId == that.guestId
-        && Objects.equals(date, that.date);
+    return roomId == that.roomId && guestId == that.guestId && Objects.equals(date, that.date);
   }
 
   @Override
-  final public int hashCode() {
+  public final int hashCode() {
     return Objects.hash(roomId, guestId, date);
   }
 }

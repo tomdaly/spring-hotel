@@ -10,11 +10,10 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 
 public class TestUtils {
-  private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-
   // POST form helper function to convert form data into encoded data for POSTing
   public static String buildUrlEncodedFormEntity(String... params) {
     if ((params.length % 2) > 0) {
@@ -38,7 +37,7 @@ public class TestUtils {
   }
 
   public static RoomReservation createMockRoomReservation() throws Exception {
-    Date date = DATE_FORMAT.parse("2019-01-01");
+    LocalDate date = LocalDate.parse("2019-01-01");
     RoomReservation mockRoomReservation = new RoomReservation(1, 1, date);
     mockRoomReservation.setLastName("Bar");
     mockRoomReservation.setFirstName("Foo");

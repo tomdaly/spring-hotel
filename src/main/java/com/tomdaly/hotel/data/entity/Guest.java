@@ -132,9 +132,7 @@ public class Guest {
     if (this == o) return true;
     if (!(o instanceof Guest)) return false;
     Guest that = (Guest) o;
-    return
-        Objects.equals(firstName, that.firstName)
-        && Objects.equals(lastName, that.lastName);
+    return Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName);
   }
 
   @Override

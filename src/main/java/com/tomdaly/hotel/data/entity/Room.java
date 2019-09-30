@@ -12,10 +12,10 @@ public class Room {
   private long id;
 
   @Column(name = "NAME")
-  final private String name;
+  private final String name;
 
   @Column(name = "ROOM_NUMBER")
-  final private String number;
+  private final String number;
 
   @Column(name = "BED_INFO")
   private String bedInfo;
@@ -57,18 +57,18 @@ public class Room {
   @Override
   public String toString() {
     return "Room{"
-            + "id="
-            + id
-            + ", name='"
-            + name
-            + '\''
-            + ", number='"
-            + number
-            + '\''
-            + ", bedInfo='"
-            + bedInfo
-            + '\''
-            + '}';
+        + "id="
+        + id
+        + ", name='"
+        + name
+        + '\''
+        + ", number='"
+        + number
+        + '\''
+        + ", bedInfo='"
+        + bedInfo
+        + '\''
+        + '}';
   }
 
   @Override
@@ -76,9 +76,7 @@ public class Room {
     if (this == o) return true;
     if (!(o instanceof Room)) return false;
     Room that = (Room) o;
-    return
-        Objects.equals(name, that.name)
-        && Objects.equals(number, that.number);
+    return Objects.equals(name, that.name) && Objects.equals(number, that.number);
   }
 
   @Override

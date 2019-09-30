@@ -4,9 +4,8 @@ import com.tomdaly.hotel.aspect.Loggable;
 import com.tomdaly.hotel.data.entity.Guest;
 import com.tomdaly.hotel.data.repository.GuestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
-import javax.validation.ConstraintViolationException;
 
 @Service
 public class GuestService {
@@ -55,7 +54,7 @@ public class GuestService {
       try {
         this.guestRepository.delete(guest);
         return "Guest '" + firstName + " " + lastName + "' deleted";
-      } catch (Exception e) {
+      } catch (DataIntegrityViolationException e) {
         return "Could not delete guest '"
             + firstName
             + " "

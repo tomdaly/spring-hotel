@@ -10,8 +10,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(ReservationServiceController.class)
 public class ReservationServiceControllerTest {
-  private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-
   @MockBean private ReservationService reservationService;
   @Autowired private MockMvc mockMvc;
 

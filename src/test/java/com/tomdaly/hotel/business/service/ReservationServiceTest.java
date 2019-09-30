@@ -13,9 +13,8 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,7 +41,7 @@ public class ReservationServiceTest {
   @Test
   public void testAddReservation_shouldReturnNewRoomReservationWithCorrectDetails()
       throws Exception {
-    Date testDate = new SimpleDateFormat("yyyy-MM-dd").parse("2019-01-01");
+    LocalDate testDate = LocalDate.parse("2019-01-01");
 
     List<Room> mockRoomList = new ArrayList<>();
     Room mockRoomOne = createMockRoom();
@@ -60,7 +59,7 @@ public class ReservationServiceTest {
     expectedRoomReservation.setRoomNumber("J2");
     expectedRoomReservation.setRoomName("JUnit Test Room 2");
 
-    given(reservationRepository.findByDate(new java.sql.Date(testDate.getTime())))
+    given(reservationRepository.findByDate(java.sql.Date.valueOf(testDate)))
         .willReturn(mockReservationList);
     given(roomRepository.findAll()).willReturn(mockRoomList);
     given(guestRepository.findByFirstNameAndLastNameIgnoreCase("Foo", "Bar")).willReturn(mockGuest);
@@ -71,9 +70,10 @@ public class ReservationServiceTest {
 
   @Test
   public void testAddReservation_shouldReturnEmptyReservationIfGuestNonexistent() throws Exception {
-    Date testDate = new SimpleDateFormat("yyyy-MM-dd").parse("2019-01-01");
+    LocalDate testDate = LocalDate.parse("2019-01-01");
+
     Guest mockGuest = new Guest();
-    RoomReservation expectedRoomReservation = new RoomReservation(0, 0, testDate);
+    RoomReservation expectedRoomReservation = new RoomReservation(0, 0, LocalDate.now());
     given(guestRepository.findByFirstNameAndLastNameIgnoreCase("Foo", "Bar")).willReturn(mockGuest);
     assertThat(
         reservationService.addReservation("Foo", "Bar", "2019-01-01"),
@@ -82,16 +82,16 @@ public class ReservationServiceTest {
 
   @Test
   public void testAddReservation_shouldReturnEmptyReservationIfNoRoomsAvailable() throws Exception {
-    Date testDate = new SimpleDateFormat("yyyy-MM-dd").parse("2019-01-01");
+    LocalDate testDate = LocalDate.parse("2019-01-01");
 
     List<Room> mockRoomList = new ArrayList<>();
     mockRoomList.add(createMockRoom());
     List<Reservation> mockReservationList = new ArrayList<>();
     mockReservationList.add(createMockReservation());
     Guest mockGuest = createMockGuest();
-    RoomReservation expectedRoomReservation = new RoomReservation(0, 1, testDate);
+    RoomReservation expectedRoomReservation = new RoomReservation(0, 0, LocalDate.now());
 
-    given(reservationRepository.findByDate(new java.sql.Date(testDate.getTime())))
+    given(reservationRepository.findByDate(java.sql.Date.valueOf(testDate)))
         .willReturn(mockReservationList);
     given(roomRepository.findAll()).willReturn(mockRoomList);
     given(guestRepository.findByFirstNameAndLastNameIgnoreCase("Foo", "Bar")).willReturn(mockGuest);
@@ -103,7 +103,7 @@ public class ReservationServiceTest {
   @Test
   public void testGetRoomReservationForDate_shouldReturnCorrectReservationList() throws Exception {
     String dateString = "2019-01-01";
-    Date testDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
+    LocalDate testDate = LocalDate.parse(dateString);
 
     List<Reservation> mockReservationList = new ArrayList<>();
     mockReservationList.add(createMockReservation());
@@ -114,7 +114,37 @@ public class ReservationServiceTest {
     List<RoomReservation> mockRoomReservationList = new ArrayList<>();
     mockRoomReservationList.add(createMockRoomReservation());
 
-    given(reservationRepository.findByDate(new java.sql.Date(testDate.getTime())))
+    given(reservationRepository.findByDate(java.sql.Date.valueOf(testDate)))
+        .willReturn(mockReservationList);
+    given(roomRepository.findAll()).willReturn(mockRoomList);
+    given(guestRepository.findById(1L)).willReturn(Optional.of(mockGuest));
+    assertThat(
+        reservationService.getRoomReservationsForDate(dateString),
+        is(equalTo(mockRoomReservationList)));
+  }
+
+  @Test
+  public void testGetRoomReservationForDate_shouldReturnReservationsForTodayDateIfInvalidDateGiven()
+      throws Exception {
+    String dateString = "invalid_date";
+    LocalDate todaysDate = LocalDate.now();
+
+    List<Reservation> mockReservationList = new ArrayList<>();
+    Reservation mockReservation = new Reservation(1, 1, java.sql.Date.valueOf(todaysDate));
+    mockReservationList.add(mockReservation);
+    List<Room> mockRoomList = new ArrayList<>();
+    mockRoomList.add(createMockRoom());
+    Guest mockGuest = createMockGuest();
+
+    List<RoomReservation> mockRoomReservationList = new ArrayList<>();
+    RoomReservation mockRoomReservation = new RoomReservation(1, 1, todaysDate);
+    mockRoomReservation.setRoomNumber("J1");
+    mockRoomReservation.setRoomName("JUnit Test Room");
+    mockRoomReservation.setFirstName("Foo");
+    mockRoomReservation.setLastName("Bar");
+    mockRoomReservationList.add(mockRoomReservation);
+
+    given(reservationRepository.findByDate(java.sql.Date.valueOf(todaysDate)))
         .willReturn(mockReservationList);
     given(roomRepository.findAll()).willReturn(mockRoomList);
     given(guestRepository.findById(1L)).willReturn(Optional.of(mockGuest));
