@@ -161,4 +161,32 @@ public class ReservationService {
     }
     return date;
   }
+
+  public List<RoomReservation> getRoomReservationsForGuest(String firstName, String lastName) {
+    Guest guest = this.guestRepository.findByFirstNameAndLastNameIgnoreCase(firstName, lastName);
+    List<RoomReservation> roomReservationList = new ArrayList<>();
+    if (guest != null && !guest.getFirstName().equals("")) {
+      Iterable<Reservation> reservations = this.reservationRepository.findByGuestId(guest.getId());
+      if (reservations != null) {
+        reservations.forEach(
+            reservation -> {
+              RoomReservation roomReservation =
+                  new RoomReservation(
+                      reservation.getRoomId(),
+                      reservation.getGuestId(),
+                      reservation.getDate().toLocalDate());
+              Optional<Room> roomOptional = this.roomRepository.findById(reservation.getRoomId());
+              if (roomOptional.isPresent()) {
+                Room room = roomOptional.get();
+                roomReservation.setRoomName(room.getName());
+                roomReservation.setRoomNumber(room.getNumber());
+                roomReservation.setFirstName(guest.getFirstName());
+                roomReservation.setLastName(guest.getLastName());
+                roomReservationList.add(roomReservation);
+              }
+            });
+      }
+    }
+    return roomReservationList;
+  }
 }

@@ -83,4 +83,19 @@ public class ReservationControllerTest {
         .andExpect(status().isOk())
         .andExpect(content().string(containsString("Result")));
   }
+
+  @Test
+  public void testGetReservationsForGuest_shouldReturnCorrectReservationsForDate()
+      throws Exception {
+    List<RoomReservation> expectedRoomReservationList = new ArrayList<>();
+    RoomReservation expectedRoomReservation = createMockRoomReservation();
+    expectedRoomReservationList.add(expectedRoomReservation);
+
+    given(reservationService.getRoomReservationsForGuest("Foo", "Bar"))
+        .willReturn(expectedRoomReservationList);
+    this.mockMvc
+        .perform(get("/reservations/find?firstName=Foo&lastName=Bar"))
+        .andExpect(status().isFound())
+        .andExpect(flash().attribute("reservations", expectedRoomReservationList));
+  }
 }

@@ -51,4 +51,30 @@ public class ReservationController {
   public String addReservationResultGet(Model model) {
     return "reservations_add_result";
   }
+
+  @RequestMapping(method = RequestMethod.GET, value = "/find")
+  public String getReservationsForGuest(Model model) {
+    return "reservations_find";
+  }
+
+  @RequestMapping(
+      method = RequestMethod.GET,
+      value = "/find",
+      params = {"firstName", "lastName"})
+  public String getReservationsForGuestGet(
+      final RedirectAttributes redirectAttributes,
+      Model model,
+      @RequestParam(value = "firstName") String firstName,
+      @RequestParam(value = "lastName") String lastName) {
+    List<RoomReservation> roomReservationList =
+        this.reservationService.getRoomReservationsForGuest(firstName, lastName);
+    redirectAttributes.addFlashAttribute("roomReservations", roomReservationList);
+
+    return "redirect:/reservations/find/result";
+  }
+
+  @RequestMapping(method = RequestMethod.GET, value = "/find/result")
+  public String getReservationsForGuestResultGet(Model model) {
+    return "reservations_find_result";
+  }
 }
