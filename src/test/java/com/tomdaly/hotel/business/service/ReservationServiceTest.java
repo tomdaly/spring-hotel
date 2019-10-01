@@ -69,9 +69,7 @@ public class ReservationServiceTest {
   }
 
   @Test
-  public void testAddReservation_shouldReturnEmptyReservationIfGuestNonexistent() throws Exception {
-    LocalDate testDate = LocalDate.parse("2019-01-01");
-
+  public void testAddReservation_shouldReturnEmptyReservationIfGuestNonexistent() {
     Guest mockGuest = new Guest();
     RoomReservation expectedRoomReservation = new RoomReservation(0, 0, LocalDate.now());
     given(guestRepository.findByFirstNameAndLastNameIgnoreCase("Foo", "Bar")).willReturn(mockGuest);
@@ -111,8 +109,8 @@ public class ReservationServiceTest {
     mockRoomList.add(createMockRoom());
     Guest mockGuest = createMockGuest();
 
-    List<RoomReservation> mockRoomReservationList = new ArrayList<>();
-    mockRoomReservationList.add(createMockRoomReservation());
+    List<RoomReservation> expectedRoomReservationList = new ArrayList<>();
+    expectedRoomReservationList.add(createMockRoomReservation());
 
     given(reservationRepository.findByDate(java.sql.Date.valueOf(testDate)))
         .willReturn(mockReservationList);
@@ -120,12 +118,12 @@ public class ReservationServiceTest {
     given(guestRepository.findById(1L)).willReturn(Optional.of(mockGuest));
     assertThat(
         reservationService.getRoomReservationsForDate(dateString),
-        is(equalTo(mockRoomReservationList)));
+        is(equalTo(expectedRoomReservationList)));
   }
 
   @Test
-  public void testGetRoomReservationForDate_shouldReturnReservationsForTodayDateIfInvalidDateGiven()
-      throws Exception {
+  public void
+      testGetRoomReservationForDate_shouldReturnReservationsForTodayDateIfInvalidDateGiven() {
     String dateString = "invalid_date";
     LocalDate todaysDate = LocalDate.now();
 
@@ -136,13 +134,13 @@ public class ReservationServiceTest {
     mockRoomList.add(createMockRoom());
     Guest mockGuest = createMockGuest();
 
-    List<RoomReservation> mockRoomReservationList = new ArrayList<>();
-    RoomReservation mockRoomReservation = new RoomReservation(1, 1, todaysDate);
-    mockRoomReservation.setRoomNumber("J1");
-    mockRoomReservation.setRoomName("JUnit Test Room");
-    mockRoomReservation.setFirstName("Foo");
-    mockRoomReservation.setLastName("Bar");
-    mockRoomReservationList.add(mockRoomReservation);
+    List<RoomReservation> expectedRoomReservationList = new ArrayList<>();
+    RoomReservation expectedRoomReservation = new RoomReservation(1, 1, todaysDate);
+    expectedRoomReservation.setRoomNumber("J1");
+    expectedRoomReservation.setRoomName("JUnit Test Room");
+    expectedRoomReservation.setFirstName("Foo");
+    expectedRoomReservation.setLastName("Bar");
+    expectedRoomReservationList.add(expectedRoomReservation);
 
     given(reservationRepository.findByDate(java.sql.Date.valueOf(todaysDate)))
         .willReturn(mockReservationList);
@@ -150,6 +148,32 @@ public class ReservationServiceTest {
     given(guestRepository.findById(1L)).willReturn(Optional.of(mockGuest));
     assertThat(
         reservationService.getRoomReservationsForDate(dateString),
-        is(equalTo(mockRoomReservationList)));
+        is(equalTo(expectedRoomReservationList)));
+  }
+
+  @Test
+  public void
+      testGetRoomReservationsForGuest_shouldReturnExistingRoomReservationsForExistingGuest() {
+    List<Reservation> mockReservationList = new ArrayList<>();
+    mockReservationList.add(
+        new Reservation(1, 1, java.sql.Date.valueOf(LocalDate.parse("2019-01-01"))));
+    Room mockRoom = createMockRoom();
+    Guest mockGuest = createMockGuest();
+
+    List<RoomReservation> expectedRoomReservationList = new ArrayList<>();
+    RoomReservation expectedRoomReservation =
+        new RoomReservation(1, 1, LocalDate.parse("2019-01-01"));
+    expectedRoomReservation.setRoomNumber("J1");
+    expectedRoomReservation.setRoomName("JUnit Test Room");
+    expectedRoomReservation.setFirstName("Foo");
+    expectedRoomReservation.setLastName("Bar");
+    expectedRoomReservationList.add(expectedRoomReservation);
+
+    given(reservationRepository.findByGuestId(mockGuest.getId())).willReturn(mockReservationList);
+    given(roomRepository.findById(1L)).willReturn(Optional.of(mockRoom));
+    given(guestRepository.findByFirstNameAndLastNameIgnoreCase("Foo", "Bar")).willReturn(mockGuest);
+    assertThat(
+        reservationService.getRoomReservationsForGuest("Foo", "Bar"),
+        is(equalTo(expectedRoomReservationList)));
   }
 }

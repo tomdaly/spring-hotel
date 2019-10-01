@@ -27,7 +27,7 @@ public class ReservationServiceControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @Test
-  public void apiGetReservationsForDate() throws Exception {
+  public void testApiGetReservationsForDate_shouldReturnCorrectReservationsList() throws Exception {
     List<RoomReservation> mockReservationList = new ArrayList<>();
     RoomReservation mockReservation = createMockRoomReservation();
     mockReservationList.add(mockReservation);
@@ -41,14 +41,27 @@ public class ReservationServiceControllerTest {
   }
 
   @Test
-  public void apiAddReservation() throws Exception {
+  public void testApiAddReservation_shouldReturnNewlyCreatedReservation() throws Exception {
     RoomReservation mockReservation = createMockRoomReservation();
-
     given(reservationService.addReservation("Foo", "Bar", "2019-01-01"))
         .willReturn(mockReservation);
     this.mockMvc
         .perform(get("/api/reservations/add/Foo/Bar/2019-01-01"))
         .andExpect(status().isOk())
         .andExpect(content().string(containsString("Foo")));
+  }
+
+  @Test
+  public void testApiGetReservationsForGuest_shouldReturnCorrectReservationList() throws Exception {
+    List<RoomReservation> mockReservationList = new ArrayList<>();
+    RoomReservation mockReservation = createMockRoomReservation();
+    mockReservationList.add(mockReservation);
+
+    given(reservationService.getRoomReservationsForGuest("Foo", "Bar"))
+        .willReturn(mockReservationList);
+    this.mockMvc
+        .perform(get("/api/reservations/find/Foo/Bar"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("JUnit Test")));
   }
 }

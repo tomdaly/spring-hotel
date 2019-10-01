@@ -30,4 +30,11 @@ public class ReservationServiceController {
       @PathVariable(value = "date") String dateString) {
     return this.reservationService.addReservation(firstName, lastName, dateString);
   }
+
+  @RequestMapping(method = RequestMethod.GET, value = "/reservations/find/{firstName}/{lastName}")
+  public List<RoomReservation> getReservationsForGuest(
+      @PathVariable(value = "firstName") String firstName,
+      @PathVariable(value = "lastName") String lastName) {
+    return this.reservationService.getRoomReservationsForGuest(firstName, lastName);
+  }
 }
