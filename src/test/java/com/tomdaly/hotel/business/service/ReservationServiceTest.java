@@ -23,6 +23,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ReservationServiceTest {
@@ -175,5 +176,23 @@ public class ReservationServiceTest {
     assertThat(
         reservationService.getRoomReservationsForGuest("Foo", "Bar"),
         is(equalTo(expectedRoomReservationList)));
+  }
+
+  @Test
+  public void testDeleteReservation_shouldReturnSuccessMessageWithExistingReservation()
+      throws Exception {
+    Reservation mockReservation = createMockReservation();
+    given(reservationRepository.existsByRoomIdAndGuestIdAndDate(mockReservation.getRoomId(), mockReservation.getGuestId(), mockReservation.getDate())).willReturn(true);
+    assertThat(
+        reservationService.deleteReservation(mockReservation), is(equalTo("Reservation deleted")));
+  }
+
+  @Test
+  public void testDeleteReservation_shouldReturnFailedMessageWithNonexistentReservation()
+      throws Exception {
+    Reservation mockReservation = createMockReservation();
+    assertThat(
+        reservationService.deleteReservation(mockReservation),
+        is(equalTo("Reservation not found")));
   }
 }
