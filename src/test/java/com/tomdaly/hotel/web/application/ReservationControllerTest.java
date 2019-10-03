@@ -2,6 +2,7 @@ package com.tomdaly.hotel.web.application;
 
 import com.tomdaly.hotel.business.domain.RoomReservation;
 import com.tomdaly.hotel.business.service.ReservationService;
+import com.tomdaly.hotel.data.entity.Reservation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,5 +98,31 @@ public class ReservationControllerTest {
         .perform(get("/reservations/find?firstName=Foo&lastName=Bar"))
         .andExpect(status().isFound())
         .andExpect(flash().attribute("roomReservations", expectedRoomReservationList));
+  }
+
+  @Test
+  public void testDeleteReservation_shouldReturnSuccessDeleteMessage() throws Exception {
+    RoomReservation mockRoomReservation = createMockRoomReservation();
+    Reservation mockReservation =
+        new Reservation(
+            mockRoomReservation.getRoomId(),
+            mockRoomReservation.getGuestId(),
+            java.sql.Date.valueOf(mockRoomReservation.getDate()));
+
+    given(reservationService.deleteReservation(mockReservation)).willReturn("Reservation deleted");
+    this.mockMvc
+        .perform(
+            post("/reservations/delete")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .content(
+                    buildUrlEncodedFormEntity(
+                        "roomId",
+                        String.valueOf(mockReservation.getRoomId()),
+                        "guestId",
+                        String.valueOf(mockReservation.getGuestId()),
+                        "date",
+                        mockReservation.getDate().toString())))
+        .andExpect(status().isFound())
+        .andExpect(flash().attribute("deleteMessage", "Reservation deleted"));
   }
 }

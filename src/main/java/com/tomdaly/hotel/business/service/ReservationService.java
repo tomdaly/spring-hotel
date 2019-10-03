@@ -162,6 +162,7 @@ public class ReservationService {
     return date;
   }
 
+  @Loggable
   public List<RoomReservation> getRoomReservationsForGuest(String firstName, String lastName) {
     Guest guest = this.guestRepository.findByFirstNameAndLastNameIgnoreCase(firstName, lastName);
     List<RoomReservation> roomReservationList = new ArrayList<>();
@@ -188,5 +189,16 @@ public class ReservationService {
       }
     }
     return roomReservationList;
+  }
+
+  @Loggable
+  public String deleteReservation(Reservation reservation) {
+    boolean isFound = this.reservationRepository.existsByRoomIdAndGuestIdAndDate(reservation.getRoomId(), reservation.getGuestId(), reservation.getDate());
+    if (isFound) {
+      this.reservationRepository.delete(reservation);
+    } else {
+      return "Reservation not found";
+    }
+    return "Reservation deleted";
   }
 }

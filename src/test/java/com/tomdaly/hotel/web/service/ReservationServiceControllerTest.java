@@ -2,6 +2,7 @@ package com.tomdaly.hotel.web.service;
 
 import com.tomdaly.hotel.business.domain.RoomReservation;
 import com.tomdaly.hotel.business.service.ReservationService;
+import com.tomdaly.hotel.data.entity.Reservation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.tomdaly.TestUtils.createMockReservation;
 import static com.tomdaly.TestUtils.createMockRoomReservation;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.BDDMockito.given;
@@ -63,5 +65,16 @@ public class ReservationServiceControllerTest {
         .perform(get("/api/reservations/find/Foo/Bar"))
         .andExpect(status().isOk())
         .andExpect(content().string(containsString("JUnit Test")));
+  }
+
+  @Test
+  public void testApiDeleteReservation_shouldReturnDeleteSucessMessage() throws Exception {
+    Reservation reservation = createMockReservation();
+
+    given(reservationService.deleteReservation(reservation)).willReturn("Reservation deleted");
+    this.mockMvc
+        .perform(get("/api/reservations/delete/1/1/2019-01-01"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("Reservation deleted")));
   }
 }

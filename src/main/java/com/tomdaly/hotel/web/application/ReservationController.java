@@ -2,6 +2,7 @@ package com.tomdaly.hotel.web.application;
 
 import com.tomdaly.hotel.business.domain.RoomReservation;
 import com.tomdaly.hotel.business.service.ReservationService;
+import com.tomdaly.hotel.data.entity.Reservation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -76,5 +78,31 @@ public class ReservationController {
   @RequestMapping(method = RequestMethod.GET, value = "/find/result")
   public String getReservationsForGuestResultGet(Model model) {
     return "reservations_find_result";
+  }
+
+  @RequestMapping(
+      method = RequestMethod.POST,
+      value = "/delete",
+      params = {"roomId", "guestId", "date"})
+  public String deleteReservationPost(
+      final RedirectAttributes redirectAttributes,
+      Model model,
+      @RequestParam(value = "roomId") String roomIdStr,
+      @RequestParam(value = "guestId") String guestIdStr,
+      @RequestParam(value = "date") String dateStr) {
+    String deleteMessage = "";
+    try {
+      long roomId = Long.parseLong(roomIdStr);
+      long guestId = Long.parseLong(guestIdStr);
+      java.sql.Date date = java.sql.Date.valueOf(LocalDate.parse(dateStr));
+      Reservation reservation = new Reservation(roomId, guestId, date);
+      deleteMessage = this.reservationService.deleteReservation(reservation);
+    } catch (NumberFormatException e) {
+      deleteMessage = "Invalid reservation ID";
+      e.printStackTrace();
+    }
+
+    redirectAttributes.addFlashAttribute("deleteMessage", deleteMessage);
+    return "redirect:/reservations/find";
   }
 }

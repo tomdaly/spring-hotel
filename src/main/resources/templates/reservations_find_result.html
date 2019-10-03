@@ -38,6 +38,13 @@
                 <p th:text="'Room Number: ' + ${roomReservation.roomNumber}"/>
                 <p th:text="'Reservation ID: ' + ${roomReservation.guestId} + ${roomReservation.roomId}"/>
                 <br>
+                <form action="/reservations/delete" method="post">
+                    <input type="hidden" name="roomId" th:value="${roomReservation.roomId}"/>
+                    <input type="hidden" name="guestId" th:value="${roomReservation.guestId}"/>
+                    <input type="hidden" name="date" th:value="${roomReservation.date}"/>
+                    <input type="submit" name="delete" value="Delete Reservation"/>
+                </form>
+                <br>
             </div>
             <div th:if="${roomReservations} != null or ${roomReservations.isEmpty()}">
                 <p>No reservations for guest</p>
