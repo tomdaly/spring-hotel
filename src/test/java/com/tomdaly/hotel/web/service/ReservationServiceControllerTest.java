@@ -23,7 +23,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebMvcTest(ReservationServiceController.class)
+@WebMvcTest(
+    controllers = {ReservationServiceController.class},
+    secure = false)
 public class ReservationServiceControllerTest {
   @MockBean private ReservationService reservationService;
   @Autowired private MockMvc mockMvc;

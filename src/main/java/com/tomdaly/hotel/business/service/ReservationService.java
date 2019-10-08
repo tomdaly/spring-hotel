@@ -193,7 +193,9 @@ public class ReservationService {
 
   @Loggable
   public String deleteReservation(Reservation reservation) {
-    boolean isFound = this.reservationRepository.existsByRoomIdAndGuestIdAndDate(reservation.getRoomId(), reservation.getGuestId(), reservation.getDate());
+    boolean isFound =
+        this.reservationRepository.existsByRoomIdAndGuestIdAndDate(
+            reservation.getRoomId(), reservation.getGuestId(), reservation.getDate());
     if (isFound) {
       this.reservationRepository.delete(reservation);
     } else {

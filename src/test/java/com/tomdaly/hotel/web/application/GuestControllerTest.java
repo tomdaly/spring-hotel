@@ -20,7 +20,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebMvcTest(GuestController.class)
+@WebMvcTest(
+    controllers = {GuestController.class},
+    secure = false)
 public class GuestControllerTest {
 
   @MockBean private GuestService guestService;

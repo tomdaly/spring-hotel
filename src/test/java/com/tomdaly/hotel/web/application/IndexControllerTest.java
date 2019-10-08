@@ -13,7 +13,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebMvcTest(IndexController.class)
+@WebMvcTest(
+    controllers = {IndexController.class},
+    secure = false)
 public class IndexControllerTest {
 
   @Autowired private MockMvc mockMvc;
