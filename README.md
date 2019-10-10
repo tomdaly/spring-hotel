@@ -14,7 +14,7 @@ A demo project to learn Spring
 In the base directory:  
 ```
 mvn clean install -DskipTests
-java -jar target/src/spring-hotel-0.0.1.jar
+java -jar target/src/spring-hotel-0.2.0.jar
 ```
 
 ## License

@@ -1,20 +1,20 @@
 language: java
-sudo: false     # builds faster
-
+sudo: false
 script:
-    - mvn clean package
+- mvn clean package
 after_success:
-    - bash <(curl -s https://codecov.io/bash)
-
+- bash <(curl -s https://codecov.io/bash)
 deploy:
-    provider: elasticbeanstalk
-    access_key_id:
-        secure: "WoCiMGaMtgD7wdKfk4K4EGQEf+HOGTU0h+uNIQOJz8cRYfxGKqNScIpYvRcRRvhzVfnRD/Dnh7hGdafE42KnZ9uTX2dgoNQgtg5jeIVRCDCdiWq5n4jP9Lthen/YNJR06lYfByh4WJujvtC9g6dkyNJijsLF8zx7zDTNBQNAR6pt+JBfA6YJSAbTD81RBISFLiTGeG/wHRh+WL5r8mIqhQE7ArSm/SNfO26SP0LYre6Dqgsz1ZHI0z8hW+zBfZtYia++JgoFkRYnlKodA7xDpZS0s+zIW5h8knOrhlO8KbnEDJpp1wlWbDpPEfoddNwj9SvcHxpd8sMQ29dsXEnWJ2RxI0NS/6URne2qBUwbSbsPUK8yaGq4vb7BJjCcQYf5Rt+omFY8+XEobNakR0VhcLpzgJKHFayqkZUiBg6io/OWPwGy4aIOWpACLvGzlftFJAO/iJN7OyYOStOcwuxvodoUdokW1fUJmFaI3TAlGEpZwhdxNjMYqgUa5bkJLKQLXPmloQiuS6Eb6BXjf5Jz5GI0tLbt7QQFNUXxwdmJkpTyvKUZxIJDL2tdNIWy3JZpH3kvobn3J+jMGvljrWPzoY71HgA8U91OZ9j7JWya9LISuybH9XXpPeop4QjEajwKp87puh3s/DU/ASajyqm7h7PvwmvIDUm0xW+B2DTvgI8="
-    secret_access_key:
-        secure: "Ks0xfSuKYWHwOwj5O8Kv/s2qKlMV8uUB6Hy7VCSfk5oe58fVKHakHJegTxHk49I6V22zMhD3oQMDb/htSFVx7LgdOJx4I1jnthLkEQ4TreRJ4O3GMdJ81MPncPN8PY0K32JUYBMW8eVaW4kaWnhbuDwXdb4J7IHbfGaFYx7cCTZ1PnDA4Avw9n2C7TV20fgTNPYXsRNHlOI8GeVyelYSQatchA9ntQtxLqKZY5KME+psd4k68DuIxAngMVnCzCnAc4cuK/Oi9D+LQggnjRI4ljAAFx/nMI1tpAO03h+c3Oxxcot8qJJyJ56uI4GDhnDmrZJyAPhxL5k7k5TBrjIHp8fB2Gth2jiy1l3m56e1UUX1+5FHZatYB0EjiDSdrngWSwhgFGEda8rKZ64nWlstW7Xanj0iiLhpdLzoyPIFLzt0+wbQyeGcszZaY7KE8d7kR4L8xxsCdah70r2pvNCHAwCUkqCNR3UW/llziqmuDsYlC4JV6A9FEMyIHQab8daDq+rm8xG7COitm1zRpoFvk+53GEyrdH15uySNIOUyTIYhzaN1mdhPzEHQ+6kuCLM1skWVSsyEMB48Yz42dKZXOnUMAyIunbHXvAA/w+comUT85tG4gKkywy+4+JoE2+R6L/EZZUlv/f59l2hrnvB5Ig0Qn4ixZ0m0cZ82YUYLdNs="
-    region: "eu-west-2"
-    app: "SpringHotel"
-    env: "Springhotel-env"
-    bucket_name: "elasticbeanstalk-eu-west-2-643934244448"
-    on:
-        branch: master
+  zip_file: target/spring-hotel-0.2.0.jar
+  provider: elasticbeanstalk
+  access_key_id:
+    secure: WEyEmRYhqbi6DLU1tF8+o/R48h1rdw5kutwuKpRpsYZZ1Ukf/pQJSGpba6tw/BUyCIQG2SWDv0+75IGPpX3B0fpgb29lEWjv1+Mz1vfhVEIAwsaHK6RjgqmqTJGOcES8ctIpAZC1r1NxffSBs59GZBf/5DrqREFSYzaqoIjaiYo5SkQXdaDM2n6b0obkiIyHpgw314rmpAPx4vdBDGQqmlWBOeDRpA8lypEm0p13VLzH74SDm18vp09w7ySogqtt6nnOEGFI47xrp81rvns9YgTAbfkZZ0eOnuRNhu9XWL+zITOzRcYnzxQZ4QvRyB2VYzV4WXFOW8HU1EXn86O+43U3MRlFSv7z9Kd8AFoG3yuW+mKiiLzZkGTCS3lTmPg4UpRPDhoB9Arl7pEclBYVXq1pj4Zu0cszWYoxPNMuZKRhPasloaaxW6a+nGOZIb5ZiT+XGnJexEeCfokZn+kjYsAXcOy+Begs48+PVUaPPbp3hx3MdPtPd5yDcKT0eQVdxIHYEGyMyFv7d6hwSDSrSur8x2xCCcl6T5kkZnb+UdxNN+bRE5hSxdd78TvEq157tqWopsKIzkUs7kTVlFBQOlTNpjR0pHFDLtLHgsKtGBrIreHmBeKkAujcEIqNXaLrTQGNR7L7zYZoLP9i60JiwN091GOvrJW/izw9oB6+vJg=
+  secret_access_key:
+    secure: Xlpt/fOwj3ja16u/sBxZMAXzIyGeQfHppCGwuVLOBYTQko9Qg4bebY0Vmm95WeUMWJCvxhOM0F1k5vlAmLzU3vgfXT+Xjtaqlk/Pyez23NaDPbjpRw9W4T4nKlMBhiH5Te2PwE/MdnLaAy3eF2oluFfoILo99JYIefaIoiNfHAxnMXWH5LSi+fMlRYIkNVBO74aAqQO2aDHSILtqjBjciZFVZ0mRKqPNXHQ8N86/0x8VI0YFjzE8MBks6mGUlfKdD5Zc7D9vYg5WCbWGQsWXhql69miNrlJzV0ogstE3gXG9bNBRupmEJmSzj4UylRBM+xTztOdAMjBznCYDd/e8IFDOMihiZsPcfujInq052iJAJKPGWF5tCfrD5U+hg08EdO7njZoXwWkvpgZyEO/y5MuQzUcBkrTxK53FA/X0w5Jk3ih2PpQaJaDRJFm+HfmLC8qNNB2MIH1xt0fxGCvV1BvZlSYJ88abjOsdwN2q7hTXP7AFe9Zyd4iXbHCx1NaU+5sY1DDzFoC/tvw0OCj7SbyMIimTdfB1+CykfYm89iWVr91UFfyUJXPRPuPphgl635m3sKlkiqZFJmOCnTZwcoKCG8dn8q4bpWWTu63BIkZf3GFIzO1xgY08Pj/TheVBFIZksb2naj0yira2VQ+BkQFyWVfEscn7d/vHkc/nFCI=
+  region: eu-west-2
+  app: SpringHotel
+  env: Springhotel-env
+  bucket_name: elasticbeanstalk-eu-west-2-643934244448
+  skip_cleanup: true
+  on:
+    branch: master
