@@ -2,10 +2,12 @@ package com.tomdaly.hotel.business.service;
 
 import com.tomdaly.hotel.data.entity.Guest;
 import com.tomdaly.hotel.data.repository.GuestRepository;
+import com.tomdaly.hotel.data.repository.ReservationRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static com.tomdaly.TestUtils.createMockGuest;
@@ -13,24 +15,18 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class GuestServiceTest {
 
   @MockBean private GuestRepository guestRepository;
+  @MockBean private ReservationRepository reservationRepository;
   private GuestService guestService;
 
   @Before
   public void before() {
     guestService = new GuestService(guestRepository);
-  }
-
-  @Test
-  public void testFindGuest_shouldReturnCorrectGuest() {
-    Guest mockGuest = createMockGuest();
-    given(guestRepository.findByFirstNameAndLastNameIgnoreCase("Foo", "Bar")).willReturn(mockGuest);
-
-    assertThat(guestService.findGuest("Foo", "Bar"), is(equalTo(mockGuest)));
   }
 
   @Test
@@ -45,6 +41,24 @@ public class GuestServiceTest {
   }
 
   @Test
+  public void testAddGuest_shouldReturnExistingGuestIfGuestExists() {
+    Guest mockGuest = createMockGuest();
+    given(guestRepository.findByFirstNameAndLastNameIgnoreCase("Foo", "Bar")).willReturn(mockGuest);
+    assertThat(
+        guestService.addGuest(
+            "Foo", "Bar", "foo@bar.com", "42 Wallaby Way", "Australia", "Sydney", "1234567890"),
+        is(equalTo(mockGuest)));
+  }
+
+  @Test
+  public void testFindGuest_shouldReturnCorrectGuest() {
+    Guest mockGuest = createMockGuest();
+    given(guestRepository.findByFirstNameAndLastNameIgnoreCase("Foo", "Bar")).willReturn(mockGuest);
+
+    assertThat(guestService.findGuest("Foo", "Bar"), is(equalTo(mockGuest)));
+  }
+
+  @Test
   public void testDeleteGuest_shouldFailWithNonexistentGuest() {
     given(guestRepository.findByFirstNameAndLastNameIgnoreCase("Foo", "Bar"))
         .willReturn(new Guest());
@@ -56,5 +70,16 @@ public class GuestServiceTest {
     Guest mockGuest = createMockGuest();
     given(guestRepository.findByFirstNameAndLastNameIgnoreCase("Foo", "Bar")).willReturn(mockGuest);
     assertThat(guestService.deleteGuest("Foo", "Bar"), is("Guest 'Foo Bar' deleted"));
+  }
+
+  @Test
+  public void testDeleteGuest_shouldFailIfGuestHasExistingReservation() throws Exception {
+    Guest mockGuest = createMockGuest();
+    given(guestRepository.findByFirstNameAndLastNameIgnoreCase("Foo", "Bar")).willReturn(mockGuest);
+    willThrow(DataIntegrityViolationException.class).given(guestRepository).delete(mockGuest);
+    guestService.deleteGuest("Foo", "Bar");
+    assertThat(
+        guestService.deleteGuest("Foo", "Bar"),
+        is("Could not delete guest 'Foo Bar': guest has existing reservation"));
   }
 }

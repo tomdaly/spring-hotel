@@ -13,7 +13,7 @@ import java.util.Collection;
 
 @Component
 @Aspect
-public class LoggingAspect {
+class LoggingAspect {
   private static final Logger LOGGER = LoggerFactory.getLogger(LoggingAspect.class);
 
   @Pointcut("@annotation(Loggable)")
@@ -30,11 +30,7 @@ public class LoggingAspect {
     Object[] args = joinPoint.getArgs();
     if (args != null && args.length > 0) {
       message.append("args=[");
-      Arrays.asList(args)
-          .forEach(
-              arg -> {
-                message.append("arg=").append(arg).append("|");
-              });
+      Arrays.asList(args).forEach(arg -> message.append("arg=").append(arg).append("|"));
     }
     if (returnValue instanceof Collection) {
       message

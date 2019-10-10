@@ -8,7 +8,7 @@
     <title>Spring Hotel | Reservations</title>
 
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/ui-darkness/jquery-ui.css"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/site.css"/>
 
     <!--[if lt IE 9]>
@@ -17,18 +17,15 @@
     <![endif]-->
 </head>
 <body>
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="/">Spring Hotel - Reservations</a>
-        </div>
-    </div>
-</nav>
+<th:block th:include="fragments/general :: header"></th:block>
 <div class="container">
     <div class="page-header">
         <h1>Welcome to the Reservations Page</h1>
         <a href="/reservations/add">
             <button type="button" class="btn btn-primary">Add Reservation</button>
+        </a>
+        <a href="/reservations/find">
+            <button type="button" class="btn btn-primary">Find Reservation</button>
         </a>
     </div>
     <div class="input-group">
@@ -52,19 +49,6 @@
         </tr>
     </table>
 </div>
-<footer class="footer navbar-inverse navbar-fixed-bottom">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <a href="https://github.com/tomdaly/spring-hotel">repo</a>
-            </div>
-        </div>
-    </div>
-</footer>
-
-<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="/js/site.js"></script>
+<th:block th:include="fragments/general :: footer"></th:block>
 </body>
 </html>

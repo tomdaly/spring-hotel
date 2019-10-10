@@ -8,7 +8,7 @@
     <title>Spring Hotel | Reservations - Reservation Result</title>
 
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/ui-darkness/jquery-ui.css"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/site.css"/>
 
     <!--[if lt IE 9]>
@@ -17,45 +17,28 @@
     <![endif]-->
 </head>
 <body>
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="/reservations">Spring Hotel - Reservations</a>
-        </div>
-    </div>
-</nav>
+<th:block th:include="fragments/general :: header"></th:block>
 <div class="container">
     <div class="page-header">
         <h1>Add Reservation</h1>
     </div>
     <div>
         <h2>Reservation Result</h2>
-        <p th:text="${reservation.lastName} != null ? 'Name: ' + ${reservation.lastName} + ', ' + ${reservation.firstName} : 'Guest not found: could not complete reservation'"/>
-        <p th:text="${reservation.lastName} != null ? 'Date: ' + ${reservation.date} : ''"/>
-        <p th:text="${reservation.lastName} != null ? 'Room Number: ' + ${reservation.roomNumber} : ''"/>
-        <p th:text="${reservation.lastName} != null ? 'Reservation ID: ' + ${reservation.guestId} + ${reservation.roomId} : ''"/>
+        <div th:if="${reservation} != null and ${reservation.lastName} != null">
+            <p th:text="'Name: ' + ${reservation.lastName} + ', ' + ${reservation.firstName}"/>
+            <p th:text="'Date: ' + ${reservation.date}"/>
+            <p th:text="'Room Number: ' + ${reservation.roomNumber}"/>
+            <p th:text="'Reservation ID: ' + ${reservation.guestId} + ${reservation.roomId}"/>
+        </div>
+        <div th:if="${reservation} == null or ${reservation.lastName} == null">
+            <p>Could not add reservation</p>
+        </div>
         <br>
-        <a th:if="${reservation.lastName} == null" href="/guests/add">
-            <button type="button" class="btn btn-primary">Add guest</button>
-        </a>
         <a href="/reservations">
             <button type="button" class="btn btn-primary">Back to reservations page</button>
         </a>
     </div>
 </div>
-<footer class="footer navbar-inverse navbar-fixed-bottom">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <a href="https://github.com/tomdaly/spring-hotel">repo</a>
-            </div>
-        </div>
-    </div>
-</footer>
-
-<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="/js/site.js"></script>
+<th:block th:include="fragments/general :: footer"></th:block>
 </body>
 </html>

@@ -13,21 +13,23 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static com.tomdaly.TestUtils.buildUrlEncodedFormEntity;
 import static com.tomdaly.TestUtils.createMockGuest;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebMvcTest(GuestController.class)
+@WebMvcTest(
+    controllers = {GuestController.class},
+    secure = false)
 public class GuestControllerTest {
 
   @MockBean private GuestService guestService;
   @Autowired private MockMvc mockMvc;
 
   @Test
-  public void testFindGuest_shouldReturnCorrectGuestAsAttribute() throws Exception {
+  public void testFindGuestGet_shouldReturnCorrectGuestAsAttribute() throws Exception {
     Guest mockGuest = createMockGuest();
 
     given(guestService.findGuest("Foo", "Bar")).willReturn(mockGuest);
@@ -38,7 +40,7 @@ public class GuestControllerTest {
   }
 
   @Test
-  public void testAddGuest_shouldReturnNewGuestAsAttribute() throws Exception {
+  public void testAddGuestPost_shouldReturnNewGuestAsAttribute() throws Exception {
     Guest mockGuest = createMockGuest();
 
     given(
@@ -70,7 +72,7 @@ public class GuestControllerTest {
   }
 
   @Test
-  public void testDeleteGuest_shouldFailWithNonexistentGuest() throws Exception {
+  public void testDeleteGuestPost_shouldFailWithNonexistentGuest() throws Exception {
     given(guestService.deleteGuest("Foo", "Bar")).willReturn("Guest not found");
     this.mockMvc
         .perform(
@@ -82,7 +84,7 @@ public class GuestControllerTest {
   }
 
   @Test
-  public void testDeleteGuest_shouldPassWithExistingGuest() throws Exception {
+  public void testDeleteGuestPost_shouldPassWithExistingGuest() throws Exception {
     given(guestService.deleteGuest("Foo", "Bar")).willReturn("Guest 'Foo Bar' deleted");
     this.mockMvc
         .perform(
@@ -91,5 +93,61 @@ public class GuestControllerTest {
                 .content(buildUrlEncodedFormEntity("firstName", "Foo", "lastName", "Bar")))
         .andExpect(status().isFound())
         .andExpect(flash().attribute("deleteMessage", "Guest 'Foo Bar' deleted"));
+  }
+
+  @Test
+  public void testWelcomePage_shouldReturnCorrectHtmlPage() throws Exception {
+    this.mockMvc
+        .perform(get("/guests/"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("Welcome to the Guests Page")));
+  }
+
+  @Test
+  public void testFindGuest_shouldReturnCorrectHtmlPage() throws Exception {
+    this.mockMvc
+        .perform(get("/guests/find/"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("Find a Guest")));
+  }
+
+  @Test
+  public void testFindGuestResultGet_shouldReturnCorrectHtmlPage() throws Exception {
+    this.mockMvc
+        .perform(get("/guests/find/result/"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("Result")));
+  }
+
+  @Test
+  public void testAddGuestGet_shouldReturnCorrectHtmlPage() throws Exception {
+    this.mockMvc
+        .perform(get("/guests/add/"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("Create a Guest")));
+  }
+
+  @Test
+  public void testAddGuestResultGet_shouldReturnCorrectHtmlPage() throws Exception {
+    this.mockMvc
+        .perform(get("/guests/add/result/"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("Result")));
+  }
+
+  @Test
+  public void testDeleteGuestGet_shouldReturnCorrectHtmlPage() throws Exception {
+    this.mockMvc
+        .perform(get("/guests/delete/"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("Delete a Guest")));
+  }
+
+  @Test
+  public void testDeleteGuestGetPost_shouldReturnCorrectHtmlPage() throws Exception {
+    this.mockMvc
+        .perform(get("/guests/delete/result/"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("Result")));
   }
 }

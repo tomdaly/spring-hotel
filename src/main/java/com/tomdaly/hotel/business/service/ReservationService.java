@@ -11,16 +11,13 @@ import com.tomdaly.hotel.data.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
 @Service
 public class ReservationService {
-  private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-
   private final RoomRepository roomRepository;
   private final GuestRepository guestRepository;
   private final ReservationRepository reservationRepository;
@@ -39,12 +36,15 @@ public class ReservationService {
   public RoomReservation addReservation(String firstName, String lastName, String dateString) {
     Guest bookingGuest =
         this.guestRepository.findByFirstNameAndLastNameIgnoreCase(firstName, lastName);
-    if (bookingGuest.getFirstName() == null) {
+    if (bookingGuest == null || bookingGuest.getFirstName().equals("")) {
       return new RoomReservation();
     }
 
-    Date reservationDate = createDateFromDateString(dateString);
+    LocalDate reservationDate = createDateFromDateString(dateString);
     Room roomToReserve = findAvailableRoom(reservationDate);
+    if (roomToReserve.getName().equals("")) {
+      return new RoomReservation();
+    }
     RoomReservation roomReservation =
         createRoomReservationForDate(roomToReserve, reservationDate, bookingGuest);
     saveReservation(roomReservation);
@@ -52,12 +52,15 @@ public class ReservationService {
     return roomReservation;
   }
 
-  private Room findAvailableRoom(Date reservationDate) {
+  private Room findAvailableRoom(LocalDate reservationDate) {
     Iterable<Room> rooms = this.roomRepository.findAll();
     Iterable<Reservation> reservationsOnDate =
-        this.reservationRepository.findByDate(new java.sql.Date(reservationDate.getTime()));
+        this.reservationRepository.findByDate(java.sql.Date.valueOf(reservationDate));
     Iterator<Room> roomIterator = rooms.iterator();
 
+    if (!roomIterator.hasNext()) {
+      return new Room();
+    }
     Room roomToReserve = roomIterator.next();
     boolean roomFound = false;
     do {
@@ -74,40 +77,35 @@ public class ReservationService {
       } else {
         roomFound = true;
       }
-    } while (!roomFound && roomIterator.hasNext());
+    } while (!roomFound);
     if (!roomFound) {
       return new Room();
     }
     return roomToReserve;
   }
 
-  private RoomReservation createRoomReservationForDate(Room room, Date date, Guest guest) {
-    RoomReservation newRoomReservation = new RoomReservation();
-    newRoomReservation.setRoomId(room.getId());
+  private RoomReservation createRoomReservationForDate(Room room, LocalDate date, Guest guest) {
+    RoomReservation newRoomReservation = new RoomReservation(room.getId(), guest.getId(), date);
     newRoomReservation.setRoomName(room.getName());
     newRoomReservation.setRoomNumber(room.getNumber());
-    newRoomReservation.setDate(date);
-    newRoomReservation.setGuestId(guest.getId());
     newRoomReservation.setFirstName(guest.getFirstName());
     newRoomReservation.setLastName(guest.getLastName());
     return newRoomReservation;
   }
 
   private void saveReservation(RoomReservation roomReservation) {
-    Reservation reservationToSave = new Reservation();
-    reservationToSave.setGuestId(roomReservation.getGuestId());
-    reservationToSave.setRoomId(roomReservation.getRoomId());
-    reservationToSave.setDate(new java.sql.Date(roomReservation.getDate().getTime()));
+    Reservation reservationToSave =
+        new Reservation(
+            roomReservation.getRoomId(),
+            roomReservation.getGuestId(),
+            java.sql.Date.valueOf(roomReservation.getDate()));
     this.reservationRepository.save(reservationToSave);
   }
 
   @Loggable
   public List<RoomReservation> getRoomReservationsForDate(String dateString) {
-    Date date = createDateFromDateString(dateString);
-
-    Map<Long, RoomReservation> roomReservationMap = new HashMap<>();
-    roomReservationMap = fillReservationMapWithRoomDetails(roomReservationMap);
-    roomReservationMap = fillReservationMapWithGuestDetails(roomReservationMap, date);
+    LocalDate date = createDateFromDateString(dateString);
+    Map<Long, RoomReservation> roomReservationMap = createAndFillRoomReservationMap(date);
 
     // convert map to list to return
     List<RoomReservation> roomReservations = new ArrayList<>();
@@ -117,55 +115,92 @@ public class ReservationService {
     return roomReservations;
   }
 
-  private Map<Long, RoomReservation> fillReservationMapWithRoomDetails(
-      Map<Long, RoomReservation> reservationMap) {
-    Iterable<Room> rooms = this.roomRepository.findAll();
+  private Map<Long, RoomReservation> createAndFillRoomReservationMap(LocalDate date) {
     Map<Long, RoomReservation> roomReservationMap = new HashMap<>();
-    rooms.forEach(
-        room -> {
-          RoomReservation roomReservation = new RoomReservation();
-          roomReservation.setRoomId(room.getId());
-          roomReservation.setRoomName(room.getName());
-          roomReservation.setRoomNumber(room.getNumber());
-          roomReservationMap.put(room.getId(), roomReservation);
-        });
-    return roomReservationMap;
-  }
 
-  private Map<Long, RoomReservation> fillReservationMapWithGuestDetails(
-      Map<Long, RoomReservation> reservationMap, Date date) {
-
-    Iterable<Reservation> reservations =
-        this.reservationRepository.findByDate(new java.sql.Date(date.getTime()));
-    if (reservations != null) {
-      reservations.forEach(
+    Iterable<Room> rooms = this.roomRepository.findAll();
+    Iterable<Reservation> reservationsOnDate =
+        this.reservationRepository.findByDate(java.sql.Date.valueOf(date));
+    if (reservationsOnDate != null) {
+      reservationsOnDate.forEach(
           reservation -> {
             Optional<Guest> guestResponse = this.guestRepository.findById(reservation.getGuestId());
             if (guestResponse.isPresent()) {
-              // fills second half of roomReservation with guest details
               Guest guest = guestResponse.get();
-              RoomReservation roomReservation = reservationMap.get(reservation.getRoomId());
-              roomReservation.setDate(date);
+              RoomReservation roomReservation =
+                  new RoomReservation(reservation.getRoomId(), guest.getId(), date);
               roomReservation.setFirstName(guest.getFirstName());
               roomReservation.setLastName(guest.getLastName());
-              roomReservation.setGuestId(guest.getId());
+              roomReservationMap.put(reservation.getRoomId(), roomReservation);
             }
           });
     }
-    return reservationMap;
+    if (rooms != null) {
+      rooms.forEach(
+          room -> {
+            RoomReservation roomReservation;
+            if ((roomReservation = roomReservationMap.get(room.getId())) != null) {
+              roomReservation.setRoomName(room.getName());
+              roomReservation.setRoomNumber(room.getNumber());
+            }
+          });
+    }
+    return roomReservationMap;
   }
 
-  private Date createDateFromDateString(String dateString) {
-    Date date;
+  private LocalDate createDateFromDateString(String dateString) {
+    LocalDate date;
     if (dateString != null) {
       try {
-        date = DATE_FORMAT.parse(dateString);
-      } catch (ParseException e) {
-        date = new Date();
+        date = LocalDate.parse(dateString);
+      } catch (DateTimeParseException e) {
+        date = LocalDate.now();
       }
     } else {
-      date = new Date(); // assume todays date if no date set
+      date = LocalDate.now(); // assume todays date if no date set
     }
     return date;
+  }
+
+  @Loggable
+  public List<RoomReservation> getRoomReservationsForGuest(String firstName, String lastName) {
+    Guest guest = this.guestRepository.findByFirstNameAndLastNameIgnoreCase(firstName, lastName);
+    List<RoomReservation> roomReservationList = new ArrayList<>();
+    if (guest != null && !guest.getFirstName().equals("")) {
+      Iterable<Reservation> reservations = this.reservationRepository.findByGuestId(guest.getId());
+      if (reservations != null) {
+        reservations.forEach(
+            reservation -> {
+              RoomReservation roomReservation =
+                  new RoomReservation(
+                      reservation.getRoomId(),
+                      reservation.getGuestId(),
+                      reservation.getDate().toLocalDate());
+              Optional<Room> roomOptional = this.roomRepository.findById(reservation.getRoomId());
+              if (roomOptional.isPresent()) {
+                Room room = roomOptional.get();
+                roomReservation.setRoomName(room.getName());
+                roomReservation.setRoomNumber(room.getNumber());
+                roomReservation.setFirstName(guest.getFirstName());
+                roomReservation.setLastName(guest.getLastName());
+                roomReservationList.add(roomReservation);
+              }
+            });
+      }
+    }
+    return roomReservationList;
+  }
+
+  @Loggable
+  public String deleteReservation(Reservation reservation) {
+    boolean isFound =
+        this.reservationRepository.existsByRoomIdAndGuestIdAndDate(
+            reservation.getRoomId(), reservation.getGuestId(), reservation.getDate());
+    if (isFound) {
+      this.reservationRepository.delete(reservation);
+    } else {
+      return "Reservation not found";
+    }
+    return "Reservation deleted";
   }
 }

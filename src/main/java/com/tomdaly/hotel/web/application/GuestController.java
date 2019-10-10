@@ -48,8 +48,6 @@ public class GuestController {
 
   @RequestMapping(method = RequestMethod.GET, value = "/add")
   public String addGuestGet(Model model) {
-    model.addAttribute("newGuest", new Guest());
-
     return "guests_add";
   }
 

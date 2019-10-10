@@ -1,0 +1,22 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+security:
+  oauth2:
+    client:
+      clientId: 1b9a58c9a58fa46488c9
+      clientSecret: 8c354d9f9f395b5f8a0662e6988b19858779d60a
+      accessTokenUri: https://github.com/login/oauth/access_token
+      userAuthorizationUri: https://github.com/login/oauth/authorize
+      clientAuthenticationScheme: form
+    resource:
+      userInfoUri: https://api.github.com/user
+logging:
+  level:
+    root: INFO
+server:
+  port: 5000
+  servlet:
+    context:
+      path: /auth

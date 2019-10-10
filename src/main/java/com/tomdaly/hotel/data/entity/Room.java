@@ -12,13 +12,23 @@ public class Room {
   private long id;
 
   @Column(name = "NAME")
-  private String name;
+  private final String name;
 
   @Column(name = "ROOM_NUMBER")
-  private String number;
+  private final String number;
 
   @Column(name = "BED_INFO")
   private String bedInfo;
+
+  public Room() {
+    this.name = "";
+    this.number = "";
+  }
+
+  public Room(String name, String number) {
+    this.name = name;
+    this.number = number;
+  }
 
   public long getId() {
     return id;
@@ -32,16 +42,8 @@ public class Room {
     return name;
   }
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
   public String getNumber() {
     return number;
-  }
-
-  public void setNumber(String number) {
-    this.number = number;
   }
 
   public String getBedInfo() {
@@ -50,22 +52,6 @@ public class Room {
 
   public void setBedInfo(String bedInfo) {
     this.bedInfo = bedInfo;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Room room = (Room) o;
-    return id == room.id
-        && Objects.equals(name, room.name)
-        && Objects.equals(number, room.number)
-        && Objects.equals(bedInfo, room.bedInfo);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, name, number, bedInfo);
   }
 
   @Override
@@ -83,5 +69,18 @@ public class Room {
         + bedInfo
         + '\''
         + '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Room)) return false;
+    Room that = (Room) o;
+    return Objects.equals(name, that.name) && Objects.equals(number, that.number);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, number);
   }
 }

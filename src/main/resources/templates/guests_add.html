@@ -17,13 +17,7 @@
     <![endif]-->
 </head>
 <body>
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="/reservations">Spring Hotel - Guests</a>
-        </div>
-    </div>
-</nav>
+<th:block th:include="fragments/general :: header"></th:block>
 <div class="container">
     <div class="page-header">
         <h1>Create a Guest</h1>
@@ -49,19 +43,6 @@
         </form>
     </div>
 </div>
-<footer class="footer navbar-inverse navbar-fixed-bottom">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <a href="https://github.com/tomdaly/spring-hotel">repo</a>
-            </div>
-        </div>
-    </div>
-</footer>
-
-<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="/js/site.js"></script>
+<th:block th:include="fragments/general :: footer"></th:block>
 </body>
 </html>

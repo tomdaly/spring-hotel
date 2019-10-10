@@ -1,0 +1,3 @@
+ignore:
+    - "src/main/java/com/tomdaly/App.java" # ignore main App class, doesn't need coverage
+    - "src/main/java/com/tomdaly/hotel/aspect/LoggingAspect.java" # can't test logging aspects easily in unit test, asserted manually

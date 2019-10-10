@@ -4,9 +4,8 @@ import com.tomdaly.hotel.aspect.Loggable;
 import com.tomdaly.hotel.data.entity.Guest;
 import com.tomdaly.hotel.data.repository.GuestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
-import javax.validation.ConstraintViolationException;
 
 @Service
 public class GuestService {
@@ -27,12 +26,10 @@ public class GuestService {
       String state,
       String phoneNumber) {
     Guest guest = findGuest(firstName, lastName);
-    if (guest.getFirstName() != null) {
+    if (!(guest.getFirstName().equals(""))) {
       return guest;
     }
-    guest = new Guest();
-    guest.setFirstName(firstName);
-    guest.setLastName(lastName);
+    guest = new Guest(firstName, lastName);
     guest.setEmailAddress(email);
     guest.setAddress(address);
     guest.setCountry(country);
@@ -53,11 +50,11 @@ public class GuestService {
   @Loggable
   public String deleteGuest(String firstName, String lastName) {
     Guest guest = findGuest(firstName, lastName);
-    if (guest.getFirstName() != null) {
+    if (!(guest.getFirstName().equals(""))) {
       try {
         this.guestRepository.delete(guest);
         return "Guest '" + firstName + " " + lastName + "' deleted";
-      } catch (ConstraintViolationException e) {
+      } catch (DataIntegrityViolationException e) {
         return "Could not delete guest '"
             + firstName
             + " "

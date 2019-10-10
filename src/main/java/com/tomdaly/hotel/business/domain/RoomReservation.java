@@ -1,31 +1,39 @@
 package com.tomdaly.hotel.business.domain;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class RoomReservation {
-  private long roomId;
-  private long guestId;
+  private final long roomId;
+  private final long guestId;
+  private final LocalDate date;
   private String roomName;
   private String roomNumber;
   private String firstName;
   private String lastName;
-  private Date date;
+
+  public RoomReservation() {
+    this.roomId = 0;
+    this.guestId = 0;
+    this.date = LocalDate.now();
+  }
+
+  public RoomReservation(long roomId, long guestId, LocalDate date) {
+    this.roomId = roomId;
+    this.guestId = guestId;
+    this.date = date;
+  }
 
   public long getRoomId() {
     return roomId;
-  }
-
-  public void setRoomId(long roomId) {
-    this.roomId = roomId;
   }
 
   public long getGuestId() {
     return guestId;
   }
 
-  public void setGuestId(long guestId) {
-    this.guestId = guestId;
+  public LocalDate getDate() {
+    return date;
   }
 
   public String getRoomName() {
@@ -60,14 +68,6 @@ public class RoomReservation {
     this.lastName = lastName;
   }
 
-  public Date getDate() {
-    return date;
-  }
-
-  public void setDate(Date date) {
-    this.date = date;
-  }
-
   @Override
   public String toString() {
     return "RoomReservation{"
@@ -93,21 +93,15 @@ public class RoomReservation {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public final boolean equals(Object o) {
     if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (!(o instanceof RoomReservation)) return false;
     RoomReservation that = (RoomReservation) o;
-    return roomId == that.roomId
-        && guestId == that.guestId
-        && Objects.equals(roomName, that.roomName)
-        && Objects.equals(roomNumber, that.roomNumber)
-        && Objects.equals(firstName, that.firstName)
-        && Objects.equals(lastName, that.lastName)
-        && Objects.equals(date, that.date);
+    return roomId == that.roomId && guestId == that.guestId && Objects.equals(date, that.date);
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(roomId, guestId, roomName, roomNumber, firstName, lastName, date);
+  public final int hashCode() {
+    return Objects.hash(roomId, guestId, date);
   }
 }

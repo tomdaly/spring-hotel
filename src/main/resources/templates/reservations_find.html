@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-    <title>Spring Hotel | Guests - Delete Guest</title>
+    <title>Spring Hotel | Reservations - Find Reservation</title>
 
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/ui-darkness/jquery-ui.css"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
@@ -19,11 +19,16 @@
 <body>
 <th:block th:include="fragments/general :: header"></th:block>
 <div class="container">
+    <br>
     <div class="page-header">
-        <h1>Delete a Guest</h1>
+        <h1>Find a Reservation</h1>
+    </div>
+    <div th:if="${deleteMessage} != null">
+        <b><p th:text="${deleteMessage}"></p></b>
+        <br>
     </div>
     <div class="input-group">
-        <form action="#" method="post" th:action="@{/guests/delete}">
+        <form action="#" method="get" th:action="@{/reservations/find}">
             First name:<br>
             <input type="text" th:value="*{firstName}" name="firstName"><br>
             Last name:<br>

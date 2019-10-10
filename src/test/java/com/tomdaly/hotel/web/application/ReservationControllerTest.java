@@ -2,6 +2,7 @@ package com.tomdaly.hotel.web.application;
 
 import com.tomdaly.hotel.business.domain.RoomReservation;
 import com.tomdaly.hotel.business.service.ReservationService;
+import com.tomdaly.hotel.data.entity.Reservation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +24,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebMvcTest(ReservationController.class)
+@WebMvcTest(
+    controllers = {ReservationController.class},
+    secure = false)
 public class ReservationControllerTest {
 
   @MockBean private ReservationService reservationService;
   @Autowired private MockMvc mockMvc;
 
   @Test
-  public void getReservations() throws Exception {
+  public void testGetReservations_shouldReturnCorrectReservationsForDate() throws Exception {
     List<RoomReservation> mockReservationList = new ArrayList<>();
     RoomReservation mockReservation = createMockRoomReservation();
     mockReservationList.add(mockReservation);
@@ -44,7 +47,7 @@ public class ReservationControllerTest {
   }
 
   @Test
-  public void addReservation_post() throws Exception {
+  public void testAddReservation_shouldReturnCorrectRoomReservation() throws Exception {
     RoomReservation mockReservation = createMockRoomReservation();
 
     given(reservationService.addReservation("Foo", "Bar", "2019-01-01"))
@@ -58,5 +61,70 @@ public class ReservationControllerTest {
                         "firstName", "Foo", "lastName", "Bar", "date", "2019-01-01")))
         .andExpect(status().isFound())
         .andExpect(flash().attribute("reservation", mockReservation));
+  }
+
+  @Test
+  public void testGetReservations_shouldReturnCorrectHtmlPage() throws Exception {
+    this.mockMvc
+        .perform(get("/reservations/"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("Welcome to the Reservations Page")));
+  }
+
+  @Test
+  public void testAddReservationGet_shouldReturnCorrectHtmlPage() throws Exception {
+    this.mockMvc
+        .perform(get("/reservations/add/"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("Add Reservation")));
+  }
+
+  @Test
+  public void testAddReservationResultGet_shouldReturnCorrectHtmlPage() throws Exception {
+    this.mockMvc
+        .perform(get("/reservations/add/result"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("Result")));
+  }
+
+  @Test
+  public void testGetReservationsForGuest_shouldReturnCorrectReservationsForDate()
+      throws Exception {
+    List<RoomReservation> expectedRoomReservationList = new ArrayList<>();
+    RoomReservation expectedRoomReservation = createMockRoomReservation();
+    expectedRoomReservationList.add(expectedRoomReservation);
+
+    given(reservationService.getRoomReservationsForGuest("Foo", "Bar"))
+        .willReturn(expectedRoomReservationList);
+    this.mockMvc
+        .perform(get("/reservations/find?firstName=Foo&lastName=Bar"))
+        .andExpect(status().isFound())
+        .andExpect(flash().attribute("roomReservations", expectedRoomReservationList));
+  }
+
+  @Test
+  public void testDeleteReservation_shouldReturnSuccessDeleteMessage() throws Exception {
+    RoomReservation mockRoomReservation = createMockRoomReservation();
+    Reservation mockReservation =
+        new Reservation(
+            mockRoomReservation.getRoomId(),
+            mockRoomReservation.getGuestId(),
+            java.sql.Date.valueOf(mockRoomReservation.getDate()));
+
+    given(reservationService.deleteReservation(mockReservation)).willReturn("Reservation deleted");
+    this.mockMvc
+        .perform(
+            post("/reservations/delete")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .content(
+                    buildUrlEncodedFormEntity(
+                        "roomId",
+                        String.valueOf(mockReservation.getRoomId()),
+                        "guestId",
+                        String.valueOf(mockReservation.getGuestId()),
+                        "date",
+                        mockReservation.getDate().toString())))
+        .andExpect(status().isFound())
+        .andExpect(flash().attribute("deleteMessage", "Reservation deleted"));
   }
 }
