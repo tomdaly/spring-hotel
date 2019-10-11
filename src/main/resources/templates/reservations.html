@@ -42,7 +42,7 @@
             <td>Guest</td>
         </tr>
         <tr th:each="roomReservation: ${roomReservations}">
-            <td><button id="expandButton" type="button" onClick="toggleExpand();" class="btn btn-dark">Expand</button></td>
+            <td><button id="expandBtn" type="button" onClick="toggleExpand();" class="btn btn-dark">Expand</button></td>
             <td th:text="${roomReservation.roomName}"></td>
             <td th:text="${roomReservation.roomNumber}"></td>
             <td th:text="${roomReservation.lastName} != null ? ${roomReservation.lastName} + ', ' + ${roomReservation.firstName} : 'VACANT'">
@@ -84,12 +84,14 @@
 <script type="text/javascript">
     var toggleExpand = function() {
       var div = document.getElementById("expanded");
+      var btn = document.getElementById("expandBtn");
       if (div.style.display == "block") {
         div.style.display = "none";
+        btn.innerHTML = "Expand";
       } else {
         div.style.display = "block";
+        btn.innerHTML = "Close";
       }
-      console.log("called");
     }
 </script>
 </body>
