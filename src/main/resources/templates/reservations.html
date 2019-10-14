@@ -42,19 +42,17 @@
             <td>Guest</td>
         </tr>
         <tr th:each="roomReservation: ${roomReservations}">
-            <td><button id="expandBtn" type="button" onClick="toggleExpand();" class="btn btn-dark">Expand</button></td>
+            <td><button th:id="'expandBtn'+${roomReservationStat.index}" type="button" th:onclick="'javascript:toggleExpand('+${roomReservationStat.index}+')'" class="btn btn-dark">Expand</button></td>
             <td th:text="${roomReservation.roomName}"></td>
             <td th:text="${roomReservation.roomNumber}"></td>
-            <td th:text="${roomReservation.lastName} != null ? ${roomReservation.lastName} + ', ' + ${roomReservation.firstName} : 'VACANT'">
-                Full Name
-            </td>
+            <td th:text="${roomReservation.lastName} != null ? ${roomReservation.lastName} + ', ' + ${roomReservation.firstName} : 'VACANT'"></td>
         </tr>
     </table>
     <hr>
     <br>
-    <div id="expanded" style="display:none;">
-        <p>Reservation Details:</p>
-        <div th:if="${roomReservations} != null and ${not #lists.isEmpty(roomReservations)} and ${roomReservations[0].guestId} != ''">
+    <div th:each="roomReservation: ${roomReservations}">
+        <div th:id="'expand'+${roomReservationStat.index}" style="display:none;">
+            <p>Reservation Details:</p>
             <table class="table table-bordered">
                 <tr>
                     <td>Room ID</td>
@@ -64,16 +62,16 @@
                     <td>Room Number</td>
                     <td>Guest First Name</td>
                     <td>Guest Last Name</td>
-                    <td><button type="button" onClick="toggleExpand();" class="btn btn-dark">X</button></td>
+                    <td><button type="button" th:onclick="'javascript:toggleExpand('+${roomReservationStat.index}+')'" class="btn btn-dark">X</button></td>
                 </tr>
                 <tr>
-                    <td th:text="${roomReservations[0].roomId}"></td>
-                    <td th:text="${roomReservations[0].guestId}"></td>
-                    <td th:text="${roomReservations[0].date}"></td>
-                    <td th:text="${roomReservations[0].roomName}"></td>
-                    <td th:text="${roomReservations[0].roomNumber}"></td>
-                    <td th:text="${roomReservations[0].firstName}"></td>
-                    <td th:text="${roomReservations[0].lastName}"></td>
+                    <td th:text="${roomReservation.roomId}"></td>
+                    <td th:text="${roomReservation.guestId}"></td>
+                    <td th:text="${roomReservation.date}"></td>
+                    <td th:text="${roomReservation.roomName}"></td>
+                    <td th:text="${roomReservation.roomNumber}"></td>
+                    <td th:text="${roomReservation.firstName}"></td>
+                    <td th:text="${roomReservation.lastName}"></td>
                     <td></td>
                 </tr>
             </table>
@@ -82,9 +80,10 @@
 </div>
 <th:block th:include="fragments/general :: footer"></th:block>
 <script type="text/javascript">
-    var toggleExpand = function() {
-      var div = document.getElementById("expanded");
-      var btn = document.getElementById("expandBtn");
+    var toggleExpand = function(index) {
+      console.log("index: " + index);
+      var div = document.getElementById("expand" + index);
+      var btn = document.getElementById("expandBtn" + index);
       if (div.style.display == "block") {
         div.style.display = "none";
         btn.innerHTML = "Expand";
