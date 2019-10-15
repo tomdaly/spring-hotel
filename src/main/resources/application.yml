@@ -1,7 +1,11 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/hotel_db
+    username: manager
+    password: notUploadingMyDbPassToGitLol
 security:
   oauth2:
     client:
