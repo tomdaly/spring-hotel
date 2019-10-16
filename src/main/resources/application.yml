@@ -1,11 +1,12 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
   datasource:
+    initialization-mode: always
     url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/hotel_db
     username: manager
-    password: notUploadingMyDbPassToGitLol
+    password: ENC(7uo04J4idVPWlWJTL0WdL2qdWlDNCHI2)
 security:
   oauth2:
     client:
