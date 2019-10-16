@@ -1,7 +1,16 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
+    database: mysql
+  datasource:
+    initialization-mode: always
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/hotel_db
+    username: manager
+    password: ENC(7uo04J4idVPWlWJTL0WdL2qdWlDNCHI2)
+jasypt:
+  encryptor:
+    password: hotel-db-secret
 security:
   oauth2:
     client:
@@ -20,3 +29,19 @@ server:
   servlet:
     context:
       path: /auth
+
+---
+
+spring:
+  profiles: prod
+  jpa:
+    hibernate:
+      ddl-auto: none
+  datasource:
+    initialization-mode: never
+    url: jdbc:mysql://spring-hotel-db.cikshrwl8xnu.eu-west-2.rds.amazonaws.com:3306/hotel_db
+    username: manager
+    password: ENC(Db/39HzMqcbPZjf5V0h8iTxAfOjb0xBC)
+jasypt:
+  encryptor:
+    password: aws-hotel-db-secret
