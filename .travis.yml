@@ -4,11 +4,8 @@ script:
   - mvn clean package -Dspring.profiles.active=prod
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-before_deploy:
-    - mkdir -p deploy/
-    - zip -r -j deploy.zip Procfile target/spring-hotel-0.2.0.jar
 deploy:
-  zip_file: deploy.zip
+  zip_file: target/spring-hotel-0.2.0.jar
   provider: elasticbeanstalk
   access_key_id:
     secure: WEyEmRYhqbi6DLU1tF8+o/R48h1rdw5kutwuKpRpsYZZ1Ukf/pQJSGpba6tw/BUyCIQG2SWDv0+75IGPpX3B0fpgb29lEWjv1+Mz1vfhVEIAwsaHK6RjgqmqTJGOcES8ctIpAZC1r1NxffSBs59GZBf/5DrqREFSYzaqoIjaiYo5SkQXdaDM2n6b0obkiIyHpgw314rmpAPx4vdBDGQqmlWBOeDRpA8lypEm0p13VLzH74SDm18vp09w7ySogqtt6nnOEGFI47xrp81rvns9YgTAbfkZZ0eOnuRNhu9XWL+zITOzRcYnzxQZ4QvRyB2VYzV4WXFOW8HU1EXn86O+43U3MRlFSv7z9Kd8AFoG3yuW+mKiiLzZkGTCS3lTmPg4UpRPDhoB9Arl7pEclBYVXq1pj4Zu0cszWYoxPNMuZKRhPasloaaxW6a+nGOZIb5ZiT+XGnJexEeCfokZn+kjYsAXcOy+Begs48+PVUaPPbp3hx3MdPtPd5yDcKT0eQVdxIHYEGyMyFv7d6hwSDSrSur8x2xCCcl6T5kkZnb+UdxNN+bRE5hSxdd78TvEq157tqWopsKIzkUs7kTVlFBQOlTNpjR0pHFDLtLHgsKtGBrIreHmBeKkAujcEIqNXaLrTQGNR7L7zYZoLP9i60JiwN091GOvrJW/izw9oB6+vJg=
