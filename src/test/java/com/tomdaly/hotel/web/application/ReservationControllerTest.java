@@ -127,4 +127,41 @@ public class ReservationControllerTest {
         .andExpect(status().isFound())
         .andExpect(flash().attribute("deleteMessage", "Reservation deleted"));
   }
+
+
+  @Test
+  public void testDeleteReservation_onInvalidRoomId_shouldReturnInvalidReservationIdMessage() throws Exception {
+    this.mockMvc
+            .perform(
+                    post("/reservations/delete")
+                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                            .content(
+                                    buildUrlEncodedFormEntity(
+                                            "roomId",
+                                            "invalid room id",
+                                            "guestId",
+                                            "1",
+                                            "date",
+                                            "2019-01-01")))
+            .andExpect(status().isFound())
+            .andExpect(flash().attribute("deleteMessage", "Invalid reservation ID"));
+  }
+
+  @Test
+  public void testDeleteReservation_onInvalidGuestId_shouldReturnInvalidReservationIdMessage() throws Exception {
+    this.mockMvc
+            .perform(
+                    post("/reservations/delete")
+                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                            .content(
+                                    buildUrlEncodedFormEntity(
+                                            "roomId",
+                                            "1",
+                                            "guestId",
+                                            "invalid guest id",
+                                            "date",
+                                            "2019-01-01")))
+            .andExpect(status().isFound())
+            .andExpect(flash().attribute("deleteMessage", "Invalid reservation ID"));
+  }
 }
