@@ -79,4 +79,20 @@ public class ReservationServiceControllerTest {
         .andExpect(status().isOk())
         .andExpect(content().string(containsString("Reservation deleted")));
   }
+
+  @Test
+  public void testApiDeleteReservation_onInvalidRoomId_shouldReturnInvalidReservationIdMessage() throws Exception {
+    this.mockMvc
+            .perform(get("/api/reservations/delete/invalidId/1/2019-01-01"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Invalid reservation ID")));
+  }
+
+  @Test
+  public void testApiDeleteReservation_onInvalidGuestId_shouldReturnInvalidReservationIdMessage() throws Exception {
+    this.mockMvc
+            .perform(get("/api/reservations/delete/1/invalidId/2019-01-01"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Invalid reservation ID")));
+  }
 }
