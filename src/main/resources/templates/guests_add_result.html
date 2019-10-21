@@ -24,7 +24,7 @@
     </div>
     <div class="input-group">
         <h2>Result</h2>
-        <div th:if="${guest} != null">
+        <div th:if="${guest} != null and ${guest.lastName} != ''">
             <p th:text="'ID: ' + ${guest.id}"/>
             <p th:text="'Name: ' + ${guest.lastName} + ', ' + ${guest.firstName}"/>
             <p th:text="'Email: ' + ${guest.emailAddress}"/>
@@ -33,7 +33,7 @@
             <p th:text="'State: ' + ${guest.state}"/>
             <p th:text="'Phone Number: ' + ${guest.phoneNumber}"/>
         </div>
-        <div th:if="${guest} == null">
+        <div th:if="${guest} == null or ${guest.lastName} == ''">
             <p>Could not add guest</p>
         </div>
         <br>

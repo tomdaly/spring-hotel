@@ -35,16 +35,18 @@ public class GuestService {
     if (!(guest.getFirstName().equals(""))) {
       return guest;
     }
-    guest = new Guest(firstName, lastName);
-    guest.setEmailAddress(email);
-    guest.setAddress(address);
-    guest.setCountry(country);
-    guest.setState(state);
-    guest.setPhoneNumber(phoneNumber);
-
-    this.guestRepository.save(guest);
-
-    return guest;
+    if (isNameValid(firstName, lastName)) {
+      guest = new Guest(firstName, lastName);
+      guest.setEmailAddress(email);
+      guest.setAddress(address);
+      guest.setCountry(country);
+      guest.setState(state);
+      guest.setPhoneNumber(phoneNumber);
+      this.guestRepository.save(guest);
+      return guest;
+    } else {
+      return new Guest();
+    }
   }
 
   @Loggable
