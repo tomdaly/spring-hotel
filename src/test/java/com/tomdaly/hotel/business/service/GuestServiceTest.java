@@ -82,4 +82,18 @@ public class GuestServiceTest {
         guestService.deleteGuest("Foo", "Bar"),
         is("Could not delete guest 'Foo Bar': guest has existing reservation"));
   }
+
+  @Test
+  public void testIsNameValid_onFirstNameLastNameWithoutProfanity_shouldReturnTrue() {
+    String firstName = "Foo";
+    String lastName = "Bar";
+    assertThat(guestService.isNameValid(firstName, lastName), is(true));
+  }
+
+  @Test
+  public void testIsNameValid_onFirstNameWithProfanity_shouldReturnFalse() {
+    String firstName = "Profanity";
+    String lastName = "Bar";
+    assertThat(guestService.isNameValid(firstName, lastName), is(false));
+  }
 }

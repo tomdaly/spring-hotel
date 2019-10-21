@@ -7,13 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Service
 public class GuestService {
   private final GuestRepository guestRepository;
+  private Set<String> profanitySet;
 
   @Autowired
   public GuestService(GuestRepository guestRepository) {
     this.guestRepository = guestRepository;
+    this.profanitySet = new HashSet<String>();
+    this.profanitySet.add("Profanity");
   }
 
   @Loggable
@@ -39,6 +45,19 @@ public class GuestService {
     this.guestRepository.save(guest);
 
     return guest;
+  }
+
+  @Loggable
+  public boolean isNameValid(String firstName, String lastName) {
+    for (String term : profanitySet) {
+      if (firstName.equals(term)) {
+        return false;
+      }
+      if (lastName.equals(term)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Loggable
