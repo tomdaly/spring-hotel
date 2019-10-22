@@ -39,8 +39,9 @@ public class ReservationServiceTest {
   }
 
   @Test
-  public void testAddReservation_shouldReturnNewRoomReservationWithCorrectDetails()
-      throws Exception {
+  public void
+      testAddReservation_givenNewReservationDetailsAndExistingGuest_shouldReturnNewRoomReservationWithCorrectDetails()
+          throws Exception {
     LocalDate testDate = LocalDate.parse("2019-01-01");
 
     List<Room> mockRoomList = new ArrayList<>();
@@ -69,7 +70,7 @@ public class ReservationServiceTest {
   }
 
   @Test
-  public void testAddReservation_shouldReturnEmptyReservationIfGuestNonexistent() {
+  public void testAddReservation_givenNonexistentGuest_shouldReturnEmptyReservation() {
     Guest mockGuest = new Guest();
     RoomReservation expectedRoomReservation = new RoomReservation(0, 0, LocalDate.now());
     given(guestRepository.findByFirstNameAndLastNameIgnoreCase("Foo", "Bar")).willReturn(mockGuest);
@@ -79,7 +80,8 @@ public class ReservationServiceTest {
   }
 
   @Test
-  public void testAddReservation_shouldReturnEmptyReservationIfNoRoomsAvailable() throws Exception {
+  public void testAddReservation_whenNoRoomsAvailable_shouldReturnEmptyReservation()
+      throws Exception {
     LocalDate testDate = LocalDate.parse("2019-01-01");
 
     List<Room> mockRoomList = new ArrayList<>();
@@ -99,7 +101,8 @@ public class ReservationServiceTest {
   }
 
   @Test
-  public void testGetRoomReservationForDate_shouldReturnCorrectReservationList() throws Exception {
+  public void testGetRoomReservationForDate_givenValidDate_shouldReturnCorrectReservationList()
+      throws Exception {
     String dateString = "2019-01-01";
     LocalDate testDate = LocalDate.parse(dateString);
 
@@ -123,7 +126,7 @@ public class ReservationServiceTest {
 
   @Test
   public void
-      testGetRoomReservationForDate_shouldReturnReservationsForTodayDateIfInvalidDateGiven() {
+      testGetRoomReservationForDate_givenInvalidDate_shouldReturnReservationsForTodayDate() {
     String dateString = "invalid_date";
     LocalDate todaysDate = LocalDate.now();
 
@@ -153,7 +156,7 @@ public class ReservationServiceTest {
 
   @Test
   public void
-      testGetRoomReservationsForGuest_shouldReturnExistingRoomReservationsForExistingGuest() {
+      testGetRoomReservationsForGuest_givenExistingGuest_shouldReturnExistingRoomReservations() {
     List<Reservation> mockReservationList = new ArrayList<>();
     mockReservationList.add(
         new Reservation(1, 1, java.sql.Date.valueOf(LocalDate.parse("2019-01-01"))));
@@ -178,7 +181,7 @@ public class ReservationServiceTest {
   }
 
   @Test
-  public void testDeleteReservation_shouldReturnSuccessMessageWithExistingReservation()
+  public void testDeleteReservation_givenExistingReservation_shouldReturnDeletedMessage()
       throws Exception {
     Reservation mockReservation = createMockReservation();
     given(
@@ -192,7 +195,7 @@ public class ReservationServiceTest {
   }
 
   @Test
-  public void testDeleteReservation_shouldReturnFailedMessageWithNonexistentReservation()
+  public void testDeleteReservation_givenNonexistentReservation_shouldReturnNotFoundMessage()
       throws Exception {
     Reservation mockReservation = createMockReservation();
     assertThat(

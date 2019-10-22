@@ -33,7 +33,8 @@ public class ReservationControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @Test
-  public void testGetReservations_shouldReturnCorrectReservationsForDate() throws Exception {
+  public void testGetReservations_givenValidDate_shouldReturnCorrectReservationsForDate()
+      throws Exception {
     List<RoomReservation> mockReservationList = new ArrayList<>();
     RoomReservation mockReservation = createMockRoomReservation();
     mockReservationList.add(mockReservation);
@@ -47,7 +48,8 @@ public class ReservationControllerTest {
   }
 
   @Test
-  public void testAddReservation_shouldReturnCorrectRoomReservation() throws Exception {
+  public void testAddReservation_givenValidReservationDetails_shouldReturnNewRoomReservation()
+      throws Exception {
     RoomReservation mockReservation = createMockRoomReservation();
 
     given(reservationService.addReservation("Foo", "Bar", "2019-01-01"))
@@ -64,7 +66,8 @@ public class ReservationControllerTest {
   }
 
   @Test
-  public void testGetReservations_shouldReturnCorrectHtmlPage() throws Exception {
+  public void testGetReservations_whenEndpointCalled_shouldReturnCorrectHtmlPage()
+      throws Exception {
     this.mockMvc
         .perform(get("/reservations/"))
         .andExpect(status().isOk())
@@ -72,7 +75,8 @@ public class ReservationControllerTest {
   }
 
   @Test
-  public void testAddReservationGet_shouldReturnCorrectHtmlPage() throws Exception {
+  public void testAddReservationGet_whenEndpointCalled_shouldReturnCorrectHtmlPage()
+      throws Exception {
     this.mockMvc
         .perform(get("/reservations/add/"))
         .andExpect(status().isOk())
@@ -80,7 +84,8 @@ public class ReservationControllerTest {
   }
 
   @Test
-  public void testAddReservationResultGet_shouldReturnCorrectHtmlPage() throws Exception {
+  public void testAddReservationResultGet_whenEndpointCalled_shouldReturnCorrectHtmlPage()
+      throws Exception {
     this.mockMvc
         .perform(get("/reservations/add/result"))
         .andExpect(status().isOk())
@@ -88,8 +93,9 @@ public class ReservationControllerTest {
   }
 
   @Test
-  public void testGetReservationsForGuest_shouldReturnCorrectReservationsForDate()
-      throws Exception {
+  public void
+      testGetReservationsForGuest_givenExistingGuestName_shouldReturnCorrectReservationsForGuest()
+          throws Exception {
     List<RoomReservation> expectedRoomReservationList = new ArrayList<>();
     RoomReservation expectedRoomReservation = createMockRoomReservation();
     expectedRoomReservationList.add(expectedRoomReservation);
@@ -103,7 +109,8 @@ public class ReservationControllerTest {
   }
 
   @Test
-  public void testDeleteReservation_shouldReturnSuccessDeleteMessage() throws Exception {
+  public void testDeleteReservation_givenValidReservationDetails_shouldReturnSuccessDeleteMessage()
+      throws Exception {
     RoomReservation mockRoomReservation = createMockRoomReservation();
     Reservation mockReservation =
         new Reservation(
@@ -128,40 +135,31 @@ public class ReservationControllerTest {
         .andExpect(flash().attribute("deleteMessage", "Reservation deleted"));
   }
 
-
   @Test
-  public void testDeleteReservation_onInvalidRoomId_shouldReturnInvalidReservationIdMessage() throws Exception {
+  public void testDeleteReservation_givenInvalidRoomId_shouldReturnInvalidReservationIdMessage()
+      throws Exception {
     this.mockMvc
-            .perform(
-                    post("/reservations/delete")
-                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                            .content(
-                                    buildUrlEncodedFormEntity(
-                                            "roomId",
-                                            "invalid room id",
-                                            "guestId",
-                                            "1",
-                                            "date",
-                                            "2019-01-01")))
-            .andExpect(status().isFound())
-            .andExpect(flash().attribute("deleteMessage", "Invalid reservation ID"));
+        .perform(
+            post("/reservations/delete")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .content(
+                    buildUrlEncodedFormEntity(
+                        "roomId", "invalid room id", "guestId", "1", "date", "2019-01-01")))
+        .andExpect(status().isFound())
+        .andExpect(flash().attribute("deleteMessage", "Invalid reservation ID"));
   }
 
   @Test
-  public void testDeleteReservation_onInvalidGuestId_shouldReturnInvalidReservationIdMessage() throws Exception {
+  public void testDeleteReservation_givenInvalidGuestId_shouldReturnInvalidReservationIdMessage()
+      throws Exception {
     this.mockMvc
-            .perform(
-                    post("/reservations/delete")
-                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                            .content(
-                                    buildUrlEncodedFormEntity(
-                                            "roomId",
-                                            "1",
-                                            "guestId",
-                                            "invalid guest id",
-                                            "date",
-                                            "2019-01-01")))
-            .andExpect(status().isFound())
-            .andExpect(flash().attribute("deleteMessage", "Invalid reservation ID"));
+        .perform(
+            post("/reservations/delete")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .content(
+                    buildUrlEncodedFormEntity(
+                        "roomId", "1", "guestId", "invalid guest id", "date", "2019-01-01")))
+        .andExpect(status().isFound())
+        .andExpect(flash().attribute("deleteMessage", "Invalid reservation ID"));
   }
 }

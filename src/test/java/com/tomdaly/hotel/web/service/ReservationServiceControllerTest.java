@@ -31,7 +31,8 @@ public class ReservationServiceControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @Test
-  public void testApiGetReservationsForDate_shouldReturnCorrectReservationsList() throws Exception {
+  public void testApiGetReservationsForDate_givenValidDate_shouldReturnCorrectReservations()
+      throws Exception {
     List<RoomReservation> mockReservationList = new ArrayList<>();
     RoomReservation mockReservation = createMockRoomReservation();
     mockReservationList.add(mockReservation);
@@ -45,7 +46,8 @@ public class ReservationServiceControllerTest {
   }
 
   @Test
-  public void testApiAddReservation_shouldReturnNewlyCreatedReservation() throws Exception {
+  public void testApiAddReservation_givenNewReservationDetails_shouldReturnNewReservation()
+      throws Exception {
     RoomReservation mockReservation = createMockRoomReservation();
     given(reservationService.addReservation("Foo", "Bar", "2019-01-01"))
         .willReturn(mockReservation);
@@ -56,7 +58,9 @@ public class ReservationServiceControllerTest {
   }
 
   @Test
-  public void testApiGetReservationsForGuest_shouldReturnCorrectReservationList() throws Exception {
+  public void
+      testApiGetReservationsForGuest_givenValidGuestName_shouldReturnCorrectReservationList()
+          throws Exception {
     List<RoomReservation> mockReservationList = new ArrayList<>();
     RoomReservation mockReservation = createMockRoomReservation();
     mockReservationList.add(mockReservation);
@@ -70,7 +74,8 @@ public class ReservationServiceControllerTest {
   }
 
   @Test
-  public void testApiDeleteReservation_shouldReturnDeleteSucessMessage() throws Exception {
+  public void testApiDeleteReservation_givenValidReservationDetails_shouldReturnDeletedMessage()
+      throws Exception {
     Reservation reservation = createMockReservation();
 
     given(reservationService.deleteReservation(reservation)).willReturn("Reservation deleted");
@@ -81,18 +86,20 @@ public class ReservationServiceControllerTest {
   }
 
   @Test
-  public void testApiDeleteReservation_onInvalidRoomId_shouldReturnInvalidReservationIdMessage() throws Exception {
+  public void testApiDeleteReservation_givenInvalidRoomId_shouldReturnInvalidReservationIdMessage()
+      throws Exception {
     this.mockMvc
-            .perform(get("/api/reservations/delete/invalidId/1/2019-01-01"))
-            .andExpect(status().isOk())
-            .andExpect(content().string(containsString("Invalid reservation ID")));
+        .perform(get("/api/reservations/delete/invalidId/1/2019-01-01"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("Invalid reservation ID")));
   }
 
   @Test
-  public void testApiDeleteReservation_onInvalidGuestId_shouldReturnInvalidReservationIdMessage() throws Exception {
+  public void testApiDeleteReservation_givenInvalidGuestId_shouldReturnInvalidReservationIdMessage()
+      throws Exception {
     this.mockMvc
-            .perform(get("/api/reservations/delete/1/invalidId/2019-01-01"))
-            .andExpect(status().isOk())
-            .andExpect(content().string(containsString("Invalid reservation ID")));
+        .perform(get("/api/reservations/delete/1/invalidId/2019-01-01"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("Invalid reservation ID")));
   }
 }

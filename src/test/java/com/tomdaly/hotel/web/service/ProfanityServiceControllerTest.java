@@ -7,7 +7,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -26,7 +25,8 @@ public class ProfanityServiceControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @Test
-  public void testApiAddProfanity_shouldReturnProfanityWithCorrectWord() throws Exception {
+  public void testApiAddProfanity_givenNewWord_shouldReturnProfanityWithCorrectWord()
+      throws Exception {
     Profanity mockProfanity = new Profanity("foobar");
     given(profanityService.addProfanity("foobar")).willReturn(mockProfanity);
     this.mockMvc
@@ -36,7 +36,7 @@ public class ProfanityServiceControllerTest {
   }
 
   @Test
-  public void testApiDeleteProfanity_shouldReturnTrueIfProfanityDeleted() throws Exception {
+  public void testApiDeleteProfanity_givenExistingProfanity_shouldReturnTrue() throws Exception {
     given(profanityService.deleteProfanity("foobar")).willReturn(true);
     this.mockMvc
         .perform(get("/api/profanity/delete/foobar"))
@@ -45,11 +45,12 @@ public class ProfanityServiceControllerTest {
   }
 
   @Test
-  public void testApiDeleteProfanity_shouldReturnFalseIfProfanityNotFound() throws Exception {
+  public void testApiDeleteProfanity_givenNonexistentProfanity_shouldReturnFalse()
+      throws Exception {
     given(profanityService.deleteProfanity("foobar")).willReturn(false);
     this.mockMvc
-            .perform(get("/api/profanity/delete/foobar"))
-            .andExpect(status().isOk())
-            .andExpect(content().string(containsString("false")));
+        .perform(get("/api/profanity/delete/foobar"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("false")));
   }
 }

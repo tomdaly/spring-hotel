@@ -21,7 +21,7 @@ public class IndexControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @Test
-  public void testGetIndex_shouldReturnCorrectHtmlPage() throws Exception {
+  public void testGetIndex_whenEndpointCalled_shouldReturnCorrectHtmlPage() throws Exception {
     this.mockMvc
         .perform(get("/"))
         .andExpect(status().isOk())

@@ -29,7 +29,8 @@ public class GuestControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @Test
-  public void testFindGuestGet_shouldReturnCorrectGuestAsAttribute() throws Exception {
+  public void testFindGuestGet_givenExistingGuestName_shouldReturnCorrectGuestAsAttribute()
+      throws Exception {
     Guest mockGuest = createMockGuest();
 
     given(guestService.findGuest("Foo", "Bar")).willReturn(mockGuest);
@@ -40,7 +41,8 @@ public class GuestControllerTest {
   }
 
   @Test
-  public void testAddGuestPost_shouldReturnNewGuestAsAttribute() throws Exception {
+  public void testAddGuestPost_givenNewGuestDetails_shouldReturnNewGuestAsAttribute()
+      throws Exception {
     Guest mockGuest = createMockGuest();
 
     given(
@@ -72,7 +74,8 @@ public class GuestControllerTest {
   }
 
   @Test
-  public void testDeleteGuestPost_shouldFailWithNonexistentGuest() throws Exception {
+  public void testDeleteGuestPost_givenNonexistentGuestName_shouldReturnNotFoundMessage()
+      throws Exception {
     given(guestService.deleteGuest("Foo", "Bar")).willReturn("Guest not found");
     this.mockMvc
         .perform(
@@ -84,7 +87,8 @@ public class GuestControllerTest {
   }
 
   @Test
-  public void testDeleteGuestPost_shouldPassWithExistingGuest() throws Exception {
+  public void testDeleteGuestPost_givenExistingGuestName_shouldReturnDeletedMessage()
+      throws Exception {
     given(guestService.deleteGuest("Foo", "Bar")).willReturn("Guest 'Foo Bar' deleted");
     this.mockMvc
         .perform(
@@ -96,7 +100,7 @@ public class GuestControllerTest {
   }
 
   @Test
-  public void testWelcomePage_shouldReturnCorrectHtmlPage() throws Exception {
+  public void testWelcomePage_whenEndpointCalled_shouldReturnCorrectHtmlPage() throws Exception {
     this.mockMvc
         .perform(get("/guests/"))
         .andExpect(status().isOk())
@@ -104,7 +108,7 @@ public class GuestControllerTest {
   }
 
   @Test
-  public void testFindGuest_shouldReturnCorrectHtmlPage() throws Exception {
+  public void testFindGuest_whenEndpointCalled_shouldReturnCorrectHtmlPage() throws Exception {
     this.mockMvc
         .perform(get("/guests/find/"))
         .andExpect(status().isOk())
@@ -112,7 +116,8 @@ public class GuestControllerTest {
   }
 
   @Test
-  public void testFindGuestResultGet_shouldReturnCorrectHtmlPage() throws Exception {
+  public void testFindGuestResultGet_whenEndpointCalled_shouldReturnCorrectHtmlPage()
+      throws Exception {
     this.mockMvc
         .perform(get("/guests/find/result/"))
         .andExpect(status().isOk())
@@ -120,7 +125,7 @@ public class GuestControllerTest {
   }
 
   @Test
-  public void testAddGuestGet_shouldReturnCorrectHtmlPage() throws Exception {
+  public void testAddGuestGet_whenEndpointCalled_shouldReturnCorrectHtmlPage() throws Exception {
     this.mockMvc
         .perform(get("/guests/add/"))
         .andExpect(status().isOk())
@@ -128,7 +133,8 @@ public class GuestControllerTest {
   }
 
   @Test
-  public void testAddGuestResultGet_shouldReturnCorrectHtmlPage() throws Exception {
+  public void testAddGuestResultGet_whenEndpointCalled_shouldReturnCorrectHtmlPage()
+      throws Exception {
     this.mockMvc
         .perform(get("/guests/add/result/"))
         .andExpect(status().isOk())
@@ -136,7 +142,7 @@ public class GuestControllerTest {
   }
 
   @Test
-  public void testDeleteGuestGet_shouldReturnCorrectHtmlPage() throws Exception {
+  public void testDeleteGuestGet_whenEndpointCalled_shouldReturnCorrectHtmlPage() throws Exception {
     this.mockMvc
         .perform(get("/guests/delete/"))
         .andExpect(status().isOk())
@@ -144,7 +150,8 @@ public class GuestControllerTest {
   }
 
   @Test
-  public void testDeleteGuestGetPost_shouldReturnCorrectHtmlPage() throws Exception {
+  public void testDeleteGuestGetPost_whenEndpointCalled_shouldReturnCorrectHtmlPage()
+      throws Exception {
     this.mockMvc
         .perform(get("/guests/delete/result/"))
         .andExpect(status().isOk())

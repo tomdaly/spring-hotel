@@ -31,13 +31,13 @@ public class ProfanityServiceTest {
   }
 
   @Test
-  public void testAddProfanity_shouldReturnNewProfanityWithCorrectWord() {
+  public void testAddProfanity_givenNewWord_shouldReturnNewProfanityWithCorrectWord() {
     Profanity mockProfanity = new Profanity("foobar");
     assertThat(profanityService.addProfanity("foobar"), is(equalTo(mockProfanity)));
   }
 
   @Test
-  public void testDeleteProfanity_shouldReturnTrueIfProfanityDeleted() {
+  public void testDeleteProfanity_givenExistingProfanity_shouldReturnTrue() {
     Profanity mockProfanity = new Profanity("foobar");
     given(profanityRepository.findByWord("foobar")).willReturn(mockProfanity);
     doNothing().when(profanityRepository).delete(mockProfanity);
@@ -45,15 +45,17 @@ public class ProfanityServiceTest {
   }
 
   @Test
-  public void testDeleteProfanity_shouldDeleteProfanityFromRepository() {
+  public void testDeleteProfanity_givenNonexistentProfanity_shouldReturnFalse() {
     Profanity mockProfanity = new Profanity("foobar");
     given(profanityRepository.findByWord("foobar")).willReturn(null);
-    willThrow(DataIntegrityViolationException.class).given(profanityRepository).delete(mockProfanity);
+    willThrow(DataIntegrityViolationException.class)
+        .given(profanityRepository)
+        .delete(mockProfanity);
     assertThat(profanityService.deleteProfanity("foobar"), is(equalTo(false)));
   }
 
   @Test
-  public void testStaticContainsProfanity_shouldReturnTrueIfWordContainsProfanity() {
+  public void testStaticContainsProfanity_givenWordMatchingProfanity_shouldReturnTrue() {
     Set<Profanity> mockProfanitySet = new HashSet<>();
     mockProfanitySet.add(new Profanity("foobar"));
     given(profanityRepository.findAll()).willReturn(mockProfanitySet);
@@ -61,7 +63,7 @@ public class ProfanityServiceTest {
   }
 
   @Test
-  public void testStaticContainsProfanity_shouldReturnFalseIfWordDoesNotContainProfanity() {
+  public void testStaticContainsProfanity_givenWordNotMatchingProfanity_shouldReturnFalse() {
     Set<Profanity> mockProfanitySet = new HashSet<>();
     mockProfanitySet.add(new Profanity("foobar"));
     given(profanityRepository.findAll()).willReturn(mockProfanitySet);
