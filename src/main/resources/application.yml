@@ -1,10 +1,9 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     database: mysql
   datasource:
-    initialization-mode: always
     url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/hotel_db
     username: manager
     password: ENC(7uo04J4idVPWlWJTL0WdL2qdWlDNCHI2)
