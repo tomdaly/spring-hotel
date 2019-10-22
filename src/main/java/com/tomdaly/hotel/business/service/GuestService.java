@@ -3,23 +3,22 @@ package com.tomdaly.hotel.business.service;
 import com.tomdaly.hotel.aspect.Loggable;
 import com.tomdaly.hotel.data.entity.Guest;
 import com.tomdaly.hotel.data.repository.GuestRepository;
+import com.tomdaly.hotel.data.repository.ProfanityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Service
 public class GuestService {
   private final GuestRepository guestRepository;
-  private Set<String> profanitySet;
+  private final ProfanityRepository profanityRepository;
+  private final ProfanityService profanityService;
 
   @Autowired
-  public GuestService(GuestRepository guestRepository) {
+  public GuestService(GuestRepository guestRepository, ProfanityRepository profanityRepository) {
     this.guestRepository = guestRepository;
-    this.profanitySet = new HashSet<String>();
-    this.profanitySet.add("Profanity");
+    this.profanityRepository = profanityRepository;
+    this.profanityService = new ProfanityService(this.profanityRepository);
   }
 
   @Loggable
@@ -35,7 +34,8 @@ public class GuestService {
     if (!(guest.getFirstName().equals(""))) {
       return guest;
     }
-    if (isNameValid(firstName, lastName)) {
+    if (!(profanityService.containsProfanity(firstName)
+        || profanityService.containsProfanity(lastName))) {
       guest = new Guest(firstName, lastName);
       guest.setEmailAddress(email);
       guest.setAddress(address);
@@ -47,19 +47,6 @@ public class GuestService {
     } else {
       return new Guest();
     }
-  }
-
-  @Loggable
-  public boolean isNameValid(String firstName, String lastName) {
-    for (String term : profanitySet) {
-      if (firstName.equals(term)) {
-        return false;
-      }
-      if (lastName.equals(term)) {
-        return false;
-      }
-    }
-    return true;
   }
 
   @Loggable

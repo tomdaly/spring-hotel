@@ -1,7 +1,9 @@
 package com.tomdaly.hotel.business.service;
 
 import com.tomdaly.hotel.data.entity.Guest;
+import com.tomdaly.hotel.data.entity.Profanity;
 import com.tomdaly.hotel.data.repository.GuestRepository;
+import com.tomdaly.hotel.data.repository.ProfanityRepository;
 import com.tomdaly.hotel.data.repository.ReservationRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,6 +11,9 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.tomdaly.TestUtils.createMockGuest;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -22,11 +27,12 @@ public class GuestServiceTest {
 
   @MockBean private GuestRepository guestRepository;
   @MockBean private ReservationRepository reservationRepository;
+  @MockBean private ProfanityRepository profanityRepository;
   private GuestService guestService;
 
   @Before
   public void before() {
-    guestService = new GuestService(guestRepository);
+    guestService = new GuestService(guestRepository, profanityRepository);
   }
 
   @Test
@@ -84,16 +90,14 @@ public class GuestServiceTest {
   }
 
   @Test
-  public void testIsNameValid_onFirstNameLastNameWithoutProfanity_shouldReturnTrue() {
-    String firstName = "Foo";
-    String lastName = "Bar";
-    assertThat(guestService.isNameValid(firstName, lastName), is(true));
-  }
-
-  @Test
-  public void testIsNameValid_onFirstNameWithProfanity_shouldReturnFalse() {
-    String firstName = "Profanity";
-    String lastName = "Bar";
-    assertThat(guestService.isNameValid(firstName, lastName), is(false));
+  public void testAddGuest_shouldReturnEmptyGuestIfProfanityInName()  {
+    Guest mockGuest = new Guest();
+    Set<Profanity> mockProfanitySet = new HashSet<>();
+    mockProfanitySet.add(new Profanity("profanity"));
+    given(profanityRepository.findAll()).willReturn(mockProfanitySet);
+    assertThat(
+            guestService.addGuest(
+                    "profanity", "Bar", "foo@bar.com", "42 Wallaby Way", "Australia", "Sydney", "1234567890"),
+            is(equalTo(mockGuest)));
   }
 }

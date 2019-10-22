@@ -34,7 +34,7 @@ public class ProfanityServiceTest {
   }
 
   @Test
-  public void testContainsProfanity_shouldReturnTrueIfWordContainsProfanity() {
+  public void testStaticContainsProfanity_shouldReturnTrueIfWordContainsProfanity() {
     Set<Profanity> mockProfanitySet = new HashSet<>();
     mockProfanitySet.add(new Profanity("foobar"));
     given(profanityRepository.findAll()).willReturn(mockProfanitySet);
@@ -42,7 +42,7 @@ public class ProfanityServiceTest {
   }
 
   @Test
-  public void testContainsProfanity_shouldReturnFalseIfWordDoesNotContainProfanity() {
+  public void testStaticContainsProfanity_shouldReturnFalseIfWordDoesNotContainProfanity() {
     Set<Profanity> mockProfanitySet = new HashSet<>();
     mockProfanitySet.add(new Profanity("foobar"));
     given(profanityRepository.findAll()).willReturn(mockProfanitySet);
