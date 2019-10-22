@@ -17,4 +17,9 @@ public class ProfanityServiceController {
   public Profanity addProfanity(@PathVariable(value = "word") String word) {
     return this.profanityService.addProfanity(word);
   }
+
+  @RequestMapping(method = RequestMethod.GET, value = "/profanity/delete/{word}")
+  public boolean deleteProfanity(@PathVariable(value = "word") String word) {
+    return this.profanityService.deleteProfanity(word);
+  }
 }
