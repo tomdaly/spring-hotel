@@ -4,6 +4,7 @@ import com.tomdaly.hotel.aspect.Loggable;
 import com.tomdaly.hotel.data.entity.Profanity;
 import com.tomdaly.hotel.data.repository.ProfanityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -28,6 +29,20 @@ public class ProfanityService {
       this.profanityRepository.save(profanity);
     }
     return profanity;
+  }
+
+  @Loggable
+  public boolean deleteProfanity(String word) {
+    Profanity profanity = this.profanityRepository.findByWord(word);
+    if (profanity == null) {
+      return false;
+    }
+    try {
+      this.profanityRepository.delete(profanity);
+      return true;
+    } catch (DataIntegrityViolationException e) {
+      return false;
+    }
   }
 
   @Loggable

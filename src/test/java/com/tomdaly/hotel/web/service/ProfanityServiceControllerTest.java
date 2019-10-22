@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -32,5 +33,23 @@ public class ProfanityServiceControllerTest {
         .perform(get("/api/profanity/add/foobar"))
         .andExpect(status().isOk())
         .andExpect(content().string(containsString("foobar")));
+  }
+
+  @Test
+  public void testApiDeleteProfanity_shouldReturnTrueIfProfanityDeleted() throws Exception {
+    given(profanityService.deleteProfanity("foobar")).willReturn(true);
+    this.mockMvc
+        .perform(get("/api/profanity/delete/foobar"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("true")));
+  }
+
+  @Test
+  public void testApiDeleteProfanity_shouldReturnFalseIfProfanityNotFound() throws Exception {
+    given(profanityService.deleteProfanity("foobar")).willReturn(false);
+    this.mockMvc
+            .perform(get("/api/profanity/delete/foobar"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("false")));
   }
 }
