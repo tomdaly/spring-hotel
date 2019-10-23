@@ -48,6 +48,10 @@ public class ProfanitySet {
     profanities.add(profanity);
   }
 
+  public void deleteProfanity(Profanity profanity) {
+    profanities.remove(profanity);
+  }
+
   @Override
   public String toString() {
     return "ProfanitySet{"

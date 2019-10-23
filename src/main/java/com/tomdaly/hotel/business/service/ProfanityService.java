@@ -7,6 +7,7 @@ import com.tomdaly.hotel.data.repository.ProfanityRepository;
 import com.tomdaly.hotel.data.repository.ProfanitySetRepository;
 import com.tomdaly.hotel.data.repository.ProfanitySetWordsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,7 +41,6 @@ public class ProfanityService {
     return profanitySet;
   }
 
-  /*
   @Loggable
   public ProfanitySet deleteProfanityFromSet(String word, ProfanitySet profanitySet) {
     Profanity profanity = this.profanityRepository.findByWord(word);
@@ -48,10 +48,12 @@ public class ProfanityService {
       return profanitySet;
     }
     try {
+      profanitySet.deleteProfanity(profanity);
       this.profanityRepository.delete(profanity);
-      return true;
+      this.profanitySetRepository.save(profanitySet);
+      return profanitySet;
     } catch (DataIntegrityViolationException e) {
-      return false;
+      return profanitySet;
     }
   }
 
