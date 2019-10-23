@@ -1,44 +1,63 @@
 package com.tomdaly.hotel.business.service;
 
 import com.tomdaly.hotel.data.entity.Profanity;
+import com.tomdaly.hotel.data.entity.ProfanitySet;
 import com.tomdaly.hotel.data.repository.ProfanityRepository;
+import com.tomdaly.hotel.data.repository.ProfanitySetRepository;
+import com.tomdaly.hotel.data.repository.ProfanitySetWordsRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.doNothing;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ProfanityServiceTest {
 
   @MockBean private ProfanityRepository profanityRepository;
+  @MockBean private ProfanitySetRepository profanitySetRepository;
+  @MockBean private ProfanitySetWordsRepository profanitySetWordsRepository;
   private ProfanityService profanityService;
 
   @Before
   public void before() {
-    profanityService = new ProfanityService(profanityRepository);
+    profanityService =
+        new ProfanityService(
+            profanityRepository, profanitySetRepository, profanitySetWordsRepository);
   }
 
   @Test
-  public void testAddProfanity_givenNewWord_shouldReturnNewProfanityWithCorrectWord() {
-    Profanity mockProfanity = new Profanity("foobar");
-    assertThat(profanityService.addProfanity("foobar"), is(equalTo(mockProfanity)));
+  public void testAddProfanityToSet_givenNewWordAndExistingSet_shouldReturnSetWithNewProfanity() {
+    ProfanitySet testProfanitySet = new ProfanitySet("test");
+    given(profanitySetRepository.existsById(testProfanitySet.getId())).willReturn(true);
+    ProfanitySet returnedProfanitySet =
+        profanityService.addProfanityToSet("foobar", testProfanitySet);
+    ProfanitySet expectedProfanitySet = new ProfanitySet("test");
+    expectedProfanitySet.addProfanity(new Profanity("foobar"));
+    assertThat(returnedProfanitySet, is(equalTo(expectedProfanitySet)));
   }
 
   @Test
-  public void testDeleteProfanity_givenExistingProfanity_shouldReturnTrue() {
+  public void
+      testAddProfanityToSet_givenNewWordAndNonexistentSet_shouldReturnSetWithoutNewProfanity() {
+    ProfanitySet testProfanitySet = new ProfanitySet("test");
+    given(profanitySetRepository.existsById(testProfanitySet.getId())).willReturn(false);
+    ProfanitySet returnedProfanitySet =
+        profanityService.addProfanityToSet("foobar", testProfanitySet);
+    ProfanitySet expectedProfanitySet = new ProfanitySet("test");
+    assertThat(returnedProfanitySet, is(equalTo(expectedProfanitySet)));
+  }
+
+  /*
+  @Test
+  public void testDeleteProfanityFromSet_givenExistingProfanityAndExistingSet_shouldReturnSetWithoutWord() {
     Profanity mockProfanity = new Profanity("foobar");
+    ProfanitySet mockProfanitySet = new ProfanitySet("test");
     given(profanityRepository.findByWord("foobar")).willReturn(mockProfanity);
     doNothing().when(profanityRepository).delete(mockProfanity);
     assertThat(profanityService.deleteProfanity("foobar"), is(equalTo(true)));
@@ -54,6 +73,7 @@ public class ProfanityServiceTest {
     assertThat(profanityService.deleteProfanity("foobar"), is(equalTo(false)));
   }
 
+  /*
   @Test
   public void testStaticContainsProfanity_givenWordMatchingProfanity_shouldReturnTrue() {
     Set<Profanity> mockProfanitySet = new HashSet<>();
@@ -69,4 +89,5 @@ public class ProfanityServiceTest {
     given(profanityRepository.findAll()).willReturn(mockProfanitySet);
     assertThat(profanityService.containsProfanity("noProfanity"), is(false));
   }
+   */
 }

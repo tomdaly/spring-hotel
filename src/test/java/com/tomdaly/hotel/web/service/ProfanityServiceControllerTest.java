@@ -24,6 +24,7 @@ public class ProfanityServiceControllerTest {
   @MockBean private ProfanityService profanityService;
   @Autowired private MockMvc mockMvc;
 
+  /*
   @Test
   public void testApiAddProfanity_givenNewWord_shouldReturnProfanityWithCorrectWord()
       throws Exception {
@@ -53,4 +54,5 @@ public class ProfanityServiceControllerTest {
         .andExpect(status().isOk())
         .andExpect(content().string(containsString("false")));
   }
+  */
 }
