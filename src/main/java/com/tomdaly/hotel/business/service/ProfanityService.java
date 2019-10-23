@@ -11,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProfanityService {
@@ -49,7 +50,6 @@ public class ProfanityService {
     }
     try {
       profanitySet.deleteProfanity(profanity);
-      this.profanityRepository.delete(profanity);
       this.profanitySetRepository.save(profanitySet);
       return profanitySet;
     } catch (DataIntegrityViolationException e) {
@@ -57,11 +57,9 @@ public class ProfanityService {
     }
   }
 
-  /*
   @Loggable
-  public boolean containsProfanity(String stringToCheck) {
-    profanitySet = fillProfanitySetFromRepository(profanityRepository);
-    for (Profanity profanity : profanitySet) {
+  public boolean containsProfanityInSet(String stringToCheck, ProfanitySet profanitySet) {
+    for (Profanity profanity : profanitySet.getProfanities()) {
       if (stringToCheck.equals(profanity.getWord())) {
         return true;
       }
@@ -69,9 +67,18 @@ public class ProfanityService {
     return false;
   }
 
-  private static Set<Profanity> fillProfanitySetFromRepository(ProfanityRepository repository) {
-    Iterable<Profanity> iter = repository.findAll();
-    return new HashSet<Profanity>((Collection) iter);
+  public ProfanitySet updateProfanitySetFromRepository(ProfanitySet profanitySet) {
+    List<Long> profanityIdsList =
+        profanitySetWordsRepository.findProfanityIdsByProfanitySetId(
+            String.valueOf(profanitySet.getId()));
+    profanitySet.clearProfanities();
+    for (long profanityId : profanityIdsList) {
+      Optional<Profanity> profanityOptional = profanityRepository.findById(profanityId);
+      if (profanityOptional.isPresent()) {
+        Profanity profanity = profanityOptional.get();
+        profanitySet.addProfanity(profanity);
+      }
+    }
+    return profanitySet;
   }
-   */
 }

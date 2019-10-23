@@ -32,9 +32,19 @@ public class ProfanitySetTest {
   @Test
   public void testAddProfanity_givenValidProfanity_shouldAddToSet() {
     ProfanitySet profanitySet = new ProfanitySet("test");
-    Profanity mockProfanity = new Profanity("foobar");
-    profanitySet.addProfanity(mockProfanity);
+    Profanity testProfanity = new Profanity("foobar");
+    profanitySet.addProfanity(testProfanity);
     assertThat(profanitySet.getProfanities().size(), is(equalTo(1)));
+  }
+
+  @Test
+  public void testClearProfanity_onCall_shouldDeleteAllProfanitiesFromSet() {
+    ProfanitySet profanitySet = new ProfanitySet("test");
+    Profanity testProfanity = new Profanity("foobar");
+    profanitySet.addProfanity(testProfanity);
+
+    profanitySet.clearProfanities();
+    assertThat(profanitySet.getProfanities().size(), is(equalTo(0)));
   }
 
   @Test

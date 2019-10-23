@@ -52,6 +52,10 @@ public class ProfanitySet {
     profanities.remove(profanity);
   }
 
+  public void clearProfanities() {
+    profanities.clear();
+  }
+
   @Override
   public String toString() {
     return "ProfanitySet{"
@@ -61,7 +65,6 @@ public class ProfanitySet {
         + name
         + "', profanities="
         + profanities
-        + '\''
         + '}';
   }
 
