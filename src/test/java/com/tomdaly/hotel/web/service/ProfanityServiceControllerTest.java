@@ -19,10 +19,8 @@ import static com.tomdaly.TestUtils.buildUrlEncodedFormEntity;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(
@@ -118,5 +116,26 @@ public class ProfanityServiceControllerTest {
                 .content(buildUrlEncodedFormEntity("set", "test", "word", "foobar")))
         .andExpect(status().isOk())
         .andExpect(content().string(not(containsString("foobar"))));
+  }
+
+  @Test
+  public void testApiGetProfanitySets_givenExistingProfanitySets_shouldReturnListOfProfanitySets() throws Exception {
+    ProfanitySet testProfanitySetOne = new ProfanitySet("testOne");
+    ProfanitySet testProfanitySetTwo = new ProfanitySet("testTwo");
+    Profanity testProfanityOne = new Profanity("foo");
+    Profanity testProfanityTwo = new Profanity("bar");
+    testProfanitySetOne.addProfanity(testProfanityOne);
+    testProfanitySetTwo.addProfanity(testProfanityTwo);
+    List<ProfanitySet> testProfanitySetList = new ArrayList<>();
+    testProfanitySetList.add(testProfanitySetOne);
+    testProfanitySetList.add(testProfanitySetTwo);
+    given(profanityService.getProfanitySets()).willReturn(testProfanitySetList);
+    this.mockMvc
+            .perform(get("/api/profanity/sets"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("testOne")))
+            .andExpect(content().string(containsString("testTwo")))
+            .andExpect(content().string(containsString("foo")))
+            .andExpect(content().string(containsString("bar")));
   }
 }
