@@ -8,16 +8,19 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.tomdaly.TestUtils.buildUrlEncodedFormEntity;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,7 +47,10 @@ public class ProfanityServiceControllerTest {
     given(profanityService.addProfanityToSet("foobar", testProfanitySet))
         .willReturn(expectedProfanitySet);
     this.mockMvc
-        .perform(get("/api/profanity/add/test/foobar"))
+        .perform(
+            post("/api/profanity/add/")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .content(buildUrlEncodedFormEntity("set", "test", "word", "foobar")))
         .andExpect(status().isOk())
         .andExpect(content().string(containsString("foobar")));
   }
@@ -60,7 +66,10 @@ public class ProfanityServiceControllerTest {
     given(profanityService.addProfanityToSet("foobar", testProfanitySet))
         .willReturn(expectedProfanitySet);
     this.mockMvc
-        .perform(get("/api/profanity/add/invalid/foobar"))
+        .perform(
+            post("/api/profanity/add/")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .content(buildUrlEncodedFormEntity("set", "test", "word", "foobar")))
         .andExpect(status().isOk())
         .andExpect(content().string(not(containsString("foobar"))));
   }
@@ -70,22 +79,25 @@ public class ProfanityServiceControllerTest {
       testApiDeleteProfanityFromSet_givenExistingProfanityAndExistingSet_shouldReturnProfanitySetWithoutGivenProfanity()
           throws Exception {
     Profanity testProfanityOne = new Profanity("foobar");
-    Profanity testProfanityTwo = new Profanity("foobarTwo");
+    Profanity testProfanityTwo = new Profanity("notDeleted");
     ProfanitySet testProfanitySet = new ProfanitySet("test");
     testProfanitySet.addProfanity(testProfanityOne);
     testProfanitySet.addProfanity(testProfanityTwo);
     ProfanitySet expectedProfanitySet = new ProfanitySet();
-    expectedProfanitySet.addProfanity(testProfanityOne);
+    expectedProfanitySet.addProfanity(testProfanityTwo);
     List<ProfanitySet> profanitySetsList = new ArrayList<>();
     profanitySetsList.add(testProfanitySet);
     given(profanityService.getProfanitySets()).willReturn(profanitySetsList);
     given(profanityService.deleteProfanityFromSet("foobar", testProfanitySet))
         .willReturn(expectedProfanitySet);
     this.mockMvc
-        .perform(get("/api/profanity/delete/test/foobar"))
+        .perform(
+            delete("/api/profanity/delete")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .content(buildUrlEncodedFormEntity("set", "test", "word", "foobar")))
         .andExpect(status().isOk())
-        .andExpect(content().string(containsString("foobar")))
-        .andExpect(content().string(not(containsString("foobarTwo"))));
+        .andExpect(content().string(not(containsString("foobar"))))
+        .andExpect(content().string(containsString("notDeleted")));
   }
 
   @Test
@@ -100,7 +112,10 @@ public class ProfanityServiceControllerTest {
     given(profanityService.deleteProfanityFromSet("foobar", testProfanitySet))
         .willReturn(expectedProfanitySet);
     this.mockMvc
-        .perform(get("/api/profanity/delete/test/foobar"))
+        .perform(
+            delete("/api/profanity/delete")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .content(buildUrlEncodedFormEntity("set", "test", "word", "foobar")))
         .andExpect(status().isOk())
         .andExpect(content().string(not(containsString("foobar"))));
   }
