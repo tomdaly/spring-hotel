@@ -13,7 +13,7 @@ public class ProfanitySet {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  private Set<Profanity> profanities;
+  @Transient private Set<Profanity> profanities;
 
   @Column(name = "NAME")
   private final String name;
@@ -58,14 +58,7 @@ public class ProfanitySet {
 
   @Override
   public String toString() {
-    return "ProfanitySet{"
-        + "id="
-        + id
-        + ", name='"
-        + name
-        + "', profanities="
-        + profanities
-        + '}';
+    return "ProfanitySet{" + "id=" + id + ", name='" + name + "', profanities=" + profanities + '}';
   }
 
   @Override
@@ -73,11 +66,11 @@ public class ProfanitySet {
     if (this == o) return true;
     if (!(o instanceof ProfanitySet)) return false;
     ProfanitySet that = (ProfanitySet) o;
-    return Objects.equals(name, that.name) && Objects.equals(profanities, that.profanities);
+    return Objects.equals(name, that.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, profanities);
+    return Objects.hash(name);
   }
 }

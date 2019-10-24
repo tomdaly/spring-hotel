@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface ProfanitySetWordsRepository extends CrudRepository<ProfanitySetWords, Long> {
-  @Query("SELECT PROFANITY_ID FROM PROFANITYSETWORDS WHERE PROFANITYSET_ID = ?1")
-  List<Long> findProfanityIdsByProfanitySetId(String profanitySetId);
+  @Query("SELECT profanityId FROM ProfanitySetWords WHERE profanitySetId = ?1")
+  List<Long> findProfanityIdsByProfanitySetId(Long profanitySetId);
 }

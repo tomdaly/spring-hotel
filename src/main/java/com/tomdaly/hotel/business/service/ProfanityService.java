@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +29,10 @@ public class ProfanityService {
     this.profanityRepository = profanityRepository;
     this.profanitySetRepository = profanitySetRepository;
     this.profanitySetWordsRepository = profanitySetWordsRepository;
+    this.profanitySets = new ArrayList<>();
+    for (ProfanitySet profanitySet : profanitySetRepository.findAll()) {
+      updateProfanitySetFromRepository(profanitySet);
+    }
   }
 
   @Loggable
@@ -58,6 +63,16 @@ public class ProfanityService {
   }
 
   @Loggable
+  public boolean containsProfanity(String stringToCheck) {
+    for (ProfanitySet profanitySet : profanitySets) {
+      if (containsProfanityInSet(stringToCheck, profanitySet)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Loggable
   public boolean containsProfanityInSet(String stringToCheck, ProfanitySet profanitySet) {
     for (Profanity profanity : profanitySet.getProfanities()) {
       if (stringToCheck.equals(profanity.getWord())) {
@@ -69,8 +84,10 @@ public class ProfanityService {
 
   public ProfanitySet updateProfanitySetFromRepository(ProfanitySet profanitySet) {
     List<Long> profanityIdsList =
-        profanitySetWordsRepository.findProfanityIdsByProfanitySetId(
-            String.valueOf(profanitySet.getId()));
+        profanitySetWordsRepository.findProfanityIdsByProfanitySetId(profanitySet.getId());
+    if (profanitySets.contains(profanitySet)) {
+      profanitySets.remove(profanitySet);
+    }
     profanitySet.clearProfanities();
     for (long profanityId : profanityIdsList) {
       Optional<Profanity> profanityOptional = profanityRepository.findById(profanityId);
@@ -79,6 +96,11 @@ public class ProfanityService {
         profanitySet.addProfanity(profanity);
       }
     }
+    profanitySets.add(profanitySet);
     return profanitySet;
+  }
+
+  public List<ProfanitySet> getProfanitySets() {
+    return this.profanitySets;
   }
 }
