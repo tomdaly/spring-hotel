@@ -43,4 +43,9 @@ public class ProfanityServiceController {
   public List<ProfanitySet> getProfanitySets() {
       return this.profanityService.getProfanitySets();
   }
+
+  @RequestMapping(method = RequestMethod.POST, value = "/profanity/sets")
+  public ProfanitySet createProfanitySet(@RequestParam("name") String profanitySetName) {
+    return this.profanityService.createProfanitySet(profanitySetName);
+  }
 }

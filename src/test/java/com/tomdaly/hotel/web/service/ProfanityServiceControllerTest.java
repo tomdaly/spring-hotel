@@ -20,7 +20,8 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(
@@ -119,7 +120,8 @@ public class ProfanityServiceControllerTest {
   }
 
   @Test
-  public void testApiGetProfanitySets_givenExistingProfanitySets_shouldReturnListOfProfanitySets() throws Exception {
+  public void testApiGetProfanitySets_givenExistingProfanitySets_shouldReturnListOfProfanitySets()
+      throws Exception {
     ProfanitySet testProfanitySetOne = new ProfanitySet("testOne");
     ProfanitySet testProfanitySetTwo = new ProfanitySet("testTwo");
     Profanity testProfanityOne = new Profanity("foo");
@@ -131,11 +133,35 @@ public class ProfanityServiceControllerTest {
     testProfanitySetList.add(testProfanitySetTwo);
     given(profanityService.getProfanitySets()).willReturn(testProfanitySetList);
     this.mockMvc
-            .perform(get("/api/profanity/sets"))
+        .perform(get("/api/profanity/sets"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("testOne")))
+        .andExpect(content().string(containsString("testTwo")))
+        .andExpect(content().string(containsString("foo")))
+        .andExpect(content().string(containsString("bar")));
+  }
+
+  @Test
+  public void testApiCreateProfanitySet_givenValidProfanitySetName_shouldReturnNewProfanitySetWithName() throws Exception {
+    ProfanitySet testProfanitySet = new ProfanitySet("test");
+    given(profanityService.createProfanitySet("test")).willReturn(testProfanitySet);
+    this.mockMvc
+        .perform(post("/api/profanity/sets")
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        .content(buildUrlEncodedFormEntity("name", "test")))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString("test")));
+  }
+
+  @Test
+  public void testApiCreateProfanitySet_givenInvalidProfanitySetName_shouldReturnEmptyProfanitySet() throws Exception {
+    ProfanitySet testProfanitySet = new ProfanitySet();
+    given(profanityService.createProfanitySet("_")).willReturn(testProfanitySet);
+    this.mockMvc
+            .perform(post("/api/profanity/sets")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .content(buildUrlEncodedFormEntity("name", "_")))
             .andExpect(status().isOk())
-            .andExpect(content().string(containsString("testOne")))
-            .andExpect(content().string(containsString("testTwo")))
-            .andExpect(content().string(containsString("foo")))
-            .andExpect(content().string(containsString("bar")));
+            .andExpect(content().string(not(containsString("_"))));
   }
 }
