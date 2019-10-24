@@ -42,7 +42,9 @@ public class ProfanitySetWords {
   @Override
   public String toString() {
     return "ProfanitySetWords{"
-        + "profanitySetId="
+        + "id="
+        + id
+        + ", profanitySetId="
         + profanitySetId
         + ", profanityId="
         + profanityId

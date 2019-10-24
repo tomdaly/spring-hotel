@@ -1,9 +1,10 @@
 language: java
 sudo: false
 script:
-  - mvn clean package -Dspring.profiles.active=prod
+  - mvn test -Dspring.profiles.active=test
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+  - mvn clean package -Dspring.profiles.active=prod -DskipTests=true
 deploy:
   zip_file: target/spring-hotel-0.2.0.jar
   provider: elasticbeanstalk
