@@ -22,6 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ProfanityServiceTest {
@@ -124,6 +125,22 @@ public class ProfanityServiceTest {
     expectedProfanitySet.addProfanity(testProfanityTwo);
     ProfanitySet returnedProfanitySet =
         profanityService.updateProfanitySetFromRepository(testProfanitySet);
+    assertThat(returnedProfanitySet, is(equalTo(expectedProfanitySet)));
+  }
+
+  @Test
+  public void testCreateProfanitySet_givenValidName_shouldReturnNewProfanitySet() {
+    ProfanitySet expectedProfanitySet = new ProfanitySet("test");
+    given(profanitySetRepository.save(expectedProfanitySet)).willReturn(expectedProfanitySet);
+    ProfanitySet returnedProfanitySet = profanityService.createProfanitySet("test");
+    assertThat(returnedProfanitySet, is(equalTo(expectedProfanitySet)));
+  }
+
+  @Test
+  public void testCreateProfanitySet_givenInvalidName_shouldReturnEmptyProfanitySet() {
+    ProfanitySet expectedProfanitySet = new ProfanitySet("");
+    given(profanitySetRepository.save(expectedProfanitySet)).willReturn(expectedProfanitySet);
+    ProfanitySet returnedProfanitySet = profanityService.createProfanitySet("");
     assertThat(returnedProfanitySet, is(equalTo(expectedProfanitySet)));
   }
 }
