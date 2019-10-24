@@ -2,53 +2,79 @@ package com.tomdaly.hotel.business.service;
 
 import com.tomdaly.hotel.aspect.Loggable;
 import com.tomdaly.hotel.data.entity.Profanity;
+import com.tomdaly.hotel.data.entity.ProfanitySet;
 import com.tomdaly.hotel.data.repository.ProfanityRepository;
+import com.tomdaly.hotel.data.repository.ProfanitySetRepository;
+import com.tomdaly.hotel.data.repository.ProfanitySetWordsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProfanityService {
   private final ProfanityRepository profanityRepository;
-  private Set<Profanity> profanitySet;
+  private final ProfanitySetRepository profanitySetRepository;
+  private final ProfanitySetWordsRepository profanitySetWordsRepository;
+  private List<ProfanitySet> profanitySets;
 
   @Autowired
-  public ProfanityService(ProfanityRepository profanityRepository) {
+  public ProfanityService(
+      ProfanityRepository profanityRepository,
+      ProfanitySetRepository profanitySetRepository,
+      ProfanitySetWordsRepository profanitySetWordsRepository) {
     this.profanityRepository = profanityRepository;
-  }
-
-  @Loggable
-  public Profanity addProfanity(String word) {
-    Profanity profanity = this.profanityRepository.findByWord(word);
-    if (profanity == null) {
-      profanity = new Profanity(word);
-      this.profanityRepository.save(profanity);
+    this.profanitySetRepository = profanitySetRepository;
+    this.profanitySetWordsRepository = profanitySetWordsRepository;
+    this.profanitySets = new ArrayList<>();
+    for (ProfanitySet profanitySet : profanitySetRepository.findAll()) {
+      updateProfanitySetFromRepository(profanitySet);
     }
-    return profanity;
   }
 
   @Loggable
-  public boolean deleteProfanity(String word) {
+  public ProfanitySet addProfanityToSet(String word, ProfanitySet profanitySet) {
+    if (profanitySetRepository.existsById(profanitySet.getId())) {
+      Profanity profanity = new Profanity(word);
+      profanitySet.addProfanity(profanity);
+      profanityRepository.save(profanity);
+      profanitySetRepository.save(profanitySet);
+      return profanitySet;
+    }
+    return profanitySet;
+  }
+
+  @Loggable
+  public ProfanitySet deleteProfanityFromSet(String word, ProfanitySet profanitySet) {
     Profanity profanity = this.profanityRepository.findByWord(word);
     if (profanity == null) {
-      return false;
+      return profanitySet;
     }
     try {
-      this.profanityRepository.delete(profanity);
-      return true;
+      profanitySet.deleteProfanity(profanity);
+      this.profanitySetRepository.save(profanitySet);
+      return profanitySet;
     } catch (DataIntegrityViolationException e) {
-      return false;
+      return profanitySet;
     }
   }
 
   @Loggable
   public boolean containsProfanity(String stringToCheck) {
-    profanitySet = fillProfanitySetFromRepository(profanityRepository);
-    for (Profanity profanity : profanitySet) {
+    for (ProfanitySet profanitySet : profanitySets) {
+      if (containsProfanityInSet(stringToCheck, profanitySet)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Loggable
+  public boolean containsProfanityInSet(String stringToCheck, ProfanitySet profanitySet) {
+    for (Profanity profanity : profanitySet.getProfanities()) {
       if (stringToCheck.equals(profanity.getWord())) {
         return true;
       }
@@ -56,8 +82,25 @@ public class ProfanityService {
     return false;
   }
 
-  private static Set<Profanity> fillProfanitySetFromRepository(ProfanityRepository repository) {
-    Iterable<Profanity> iter = repository.findAll();
-    return new HashSet<Profanity>((Collection) iter);
+  public ProfanitySet updateProfanitySetFromRepository(ProfanitySet profanitySet) {
+    List<Long> profanityIdsList =
+        profanitySetWordsRepository.findProfanityIdsByProfanitySetId(profanitySet.getId());
+    if (profanitySets.contains(profanitySet)) {
+      profanitySets.remove(profanitySet);
+    }
+    profanitySet.clearProfanities();
+    for (long profanityId : profanityIdsList) {
+      Optional<Profanity> profanityOptional = profanityRepository.findById(profanityId);
+      if (profanityOptional.isPresent()) {
+        Profanity profanity = profanityOptional.get();
+        profanitySet.addProfanity(profanity);
+      }
+    }
+    profanitySets.add(profanitySet);
+    return profanitySet;
+  }
+
+  public List<ProfanitySet> getProfanitySets() {
+    return this.profanitySets;
   }
 }

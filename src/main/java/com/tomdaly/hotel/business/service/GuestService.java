@@ -3,7 +3,6 @@ package com.tomdaly.hotel.business.service;
 import com.tomdaly.hotel.aspect.Loggable;
 import com.tomdaly.hotel.data.entity.Guest;
 import com.tomdaly.hotel.data.repository.GuestRepository;
-import com.tomdaly.hotel.data.repository.ProfanityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -11,14 +10,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class GuestService {
   private final GuestRepository guestRepository;
-  private final ProfanityRepository profanityRepository;
   private final ProfanityService profanityService;
 
   @Autowired
-  public GuestService(GuestRepository guestRepository, ProfanityRepository profanityRepository) {
+  public GuestService(GuestRepository guestRepository, ProfanityService profanityService) {
     this.guestRepository = guestRepository;
-    this.profanityRepository = profanityRepository;
-    this.profanityService = new ProfanityService(this.profanityRepository);
+    this.profanityService = profanityService;
   }
 
   @Loggable
