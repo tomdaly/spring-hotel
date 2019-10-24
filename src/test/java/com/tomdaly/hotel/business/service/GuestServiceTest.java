@@ -3,8 +3,6 @@ package com.tomdaly.hotel.business.service;
 import com.tomdaly.hotel.data.entity.Guest;
 import com.tomdaly.hotel.data.entity.Profanity;
 import com.tomdaly.hotel.data.repository.GuestRepository;
-import com.tomdaly.hotel.data.repository.ProfanityRepository;
-import com.tomdaly.hotel.data.repository.ReservationRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,13 +24,12 @@ import static org.mockito.BDDMockito.willThrow;
 public class GuestServiceTest {
 
   @MockBean private GuestRepository guestRepository;
-  @MockBean private ReservationRepository reservationRepository;
-  @MockBean private ProfanityRepository profanityRepository;
+  @MockBean private ProfanityService profanityService;
   private GuestService guestService;
 
   @Before
   public void before() {
-    guestService = new GuestService(guestRepository, profanityRepository);
+    guestService = new GuestService(guestRepository, profanityService);
   }
 
   @Test
@@ -95,7 +92,7 @@ public class GuestServiceTest {
     Guest mockGuest = new Guest();
     Set<Profanity> mockProfanitySet = new HashSet<>();
     mockProfanitySet.add(new Profanity("profanity"));
-    given(profanityRepository.findAll()).willReturn(mockProfanitySet);
+    given(profanityService.containsProfanity("profanity")).willReturn(true);
     assertThat(
         guestService.addGuest(
             "profanity",

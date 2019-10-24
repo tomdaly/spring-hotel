@@ -30,8 +30,9 @@ public class ProfanityServiceControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @Test
-  public void testApiAddProfanityToSet_givenNewWordAndExistingSet_shouldReturnProfanitySetContainingCorrectProfanity()
-      throws Exception {
+  public void
+      testApiAddProfanityToSet_givenNewWordAndExistingSet_shouldReturnProfanitySetContainingCorrectProfanity()
+          throws Exception {
     Profanity testProfanity = new Profanity("foobar");
     ProfanitySet testProfanitySet = new ProfanitySet("test");
     ProfanitySet expectedProfanitySet = new ProfanitySet("test");
@@ -40,7 +41,8 @@ public class ProfanityServiceControllerTest {
     List<ProfanitySet> profanitySetsList = new ArrayList<>();
     profanitySetsList.add(testProfanitySet);
     given(profanityService.getProfanitySets()).willReturn(profanitySetsList);
-    given(profanityService.addProfanityToSet("foobar", testProfanitySet)).willReturn(expectedProfanitySet);
+    given(profanityService.addProfanityToSet("foobar", testProfanitySet))
+        .willReturn(expectedProfanitySet);
     this.mockMvc
         .perform(get("/api/profanity/add/test/foobar"))
         .andExpect(status().isOk())
@@ -49,21 +51,24 @@ public class ProfanityServiceControllerTest {
 
   @Test
   public void testApiAddProfanityToSet_givenNewWordAndNonexistentSet_shouldReturnEmptyProfanitySet()
-          throws Exception {
+      throws Exception {
     Profanity testProfanity = new Profanity("foobar");
     ProfanitySet testProfanitySet = new ProfanitySet("test");
     ProfanitySet expectedProfanitySet = new ProfanitySet();
 
     given(profanityService.getProfanitySets()).willReturn(new ArrayList<>());
-    given(profanityService.addProfanityToSet("foobar", testProfanitySet)).willReturn(expectedProfanitySet);
+    given(profanityService.addProfanityToSet("foobar", testProfanitySet))
+        .willReturn(expectedProfanitySet);
     this.mockMvc
-            .perform(get("/api/profanity/add/invalid/foobar"))
-            .andExpect(status().isOk())
-            .andExpect(content().string(not(containsString("foobar"))));
+        .perform(get("/api/profanity/add/invalid/foobar"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(not(containsString("foobar"))));
   }
 
   @Test
-  public void testApiDeleteProfanityFromSet_givenExistingProfanityAndExistingSet_shouldReturnProfanitySetWithoutGivenProfanity() throws Exception {
+  public void
+      testApiDeleteProfanityFromSet_givenExistingProfanityAndExistingSet_shouldReturnProfanitySetWithoutGivenProfanity()
+          throws Exception {
     Profanity testProfanityOne = new Profanity("foobar");
     Profanity testProfanityTwo = new Profanity("foobarTwo");
     ProfanitySet testProfanitySet = new ProfanitySet("test");
@@ -74,7 +79,8 @@ public class ProfanityServiceControllerTest {
     List<ProfanitySet> profanitySetsList = new ArrayList<>();
     profanitySetsList.add(testProfanitySet);
     given(profanityService.getProfanitySets()).willReturn(profanitySetsList);
-    given(profanityService.deleteProfanityFromSet("foobar", testProfanitySet)).willReturn(expectedProfanitySet);
+    given(profanityService.deleteProfanityFromSet("foobar", testProfanitySet))
+        .willReturn(expectedProfanitySet);
     this.mockMvc
         .perform(get("/api/profanity/delete/test/foobar"))
         .andExpect(status().isOk())
@@ -83,17 +89,19 @@ public class ProfanityServiceControllerTest {
   }
 
   @Test
-  public void testApiDeleteProfanityFromSet_givenExistingProfanityAndNonexistentSet_shouldReturnEmptyProfanitySet()
-      throws Exception {
+  public void
+      testApiDeleteProfanityFromSet_givenExistingProfanityAndNonexistentSet_shouldReturnEmptyProfanitySet()
+          throws Exception {
     Profanity testProfanity = new Profanity("foobar");
     ProfanitySet testProfanitySet = new ProfanitySet("test");
     testProfanitySet.addProfanity(testProfanity);
     ProfanitySet expectedProfanitySet = new ProfanitySet();
     given(profanityService.getProfanitySets()).willReturn(new ArrayList<>());
-    given(profanityService.deleteProfanityFromSet("foobar", testProfanitySet)).willReturn(expectedProfanitySet);
+    given(profanityService.deleteProfanityFromSet("foobar", testProfanitySet))
+        .willReturn(expectedProfanitySet);
     this.mockMvc
-            .perform(get("/api/profanity/delete/test/foobar"))
-            .andExpect(status().isOk())
-            .andExpect(content().string(not(containsString("foobar"))));
+        .perform(get("/api/profanity/delete/test/foobar"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(not(containsString("foobar"))));
   }
 }
