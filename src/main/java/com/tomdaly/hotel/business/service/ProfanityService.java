@@ -100,6 +100,16 @@ public class ProfanityService {
     return profanitySet;
   }
 
+  public ProfanitySet createProfanitySet(String name) {
+    if (name == null || name.equals("") || !name.matches("[a-zA-Z]+")) {
+      return new ProfanitySet();
+    }
+    ProfanitySet profanitySet = new ProfanitySet(name);
+    profanitySetRepository.save(profanitySet);
+    return profanitySet;
+  }
+
+
   public List<ProfanitySet> getProfanitySets() {
     return this.profanitySets;
   }
