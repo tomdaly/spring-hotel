@@ -143,7 +143,7 @@ public class ProfanityServiceTest {
   @Test
   public void testDeleteProfanitySet_givenExistingProfanitySet_shouldReturnDeleteSuccessMessage() {
     ProfanitySet testProfanitySet = new ProfanitySet("test");
-    given(profanitySetRepository.findByName("test")).willReturn(testProfanitySet);
+    given(profanityService.findProfanitySet("test")).willReturn(testProfanitySet);
     doNothing().when(profanitySetRepository).delete(testProfanitySet);
     assertThat(
         profanityService.deleteProfanitySet("test"), is(equalTo("Profanity set 'test' deleted")));
@@ -158,11 +158,11 @@ public class ProfanityServiceTest {
 
   @Test
   public void testDeleteProfanitySet_givenInvalidProfanitySet_shouldReturnDeleteFailedMessage() {
-    ProfanitySet testProfanitySet = new ProfanitySet("invalid");
-    given(profanitySetRepository.findByName("test")).willReturn(null);
+    ProfanitySet emptyProfanitySet = new ProfanitySet("");
+    given(profanityService.findProfanitySet("test")).willReturn(emptyProfanitySet);
     willThrow(DataIntegrityViolationException.class)
         .given(profanitySetRepository)
-        .delete(testProfanitySet);
+        .delete(emptyProfanitySet);
     assertThat(
         profanityService.deleteProfanitySet("test"), is(equalTo("Profanity set 'test' not found")));
   }

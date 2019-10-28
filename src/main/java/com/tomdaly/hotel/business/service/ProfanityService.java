@@ -131,7 +131,7 @@ public class ProfanityService {
     return "Profanity set '" + name + "' not found";
   }
 
-  private ProfanitySet findProfanitySet(String name) {
+  public ProfanitySet findProfanitySet(String name) {
     ProfanitySet profanitySet = profanitySetRepository.findByName(name);
     return profanitySet != null ? profanitySet : new ProfanitySet();
   }
