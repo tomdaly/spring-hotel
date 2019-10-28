@@ -66,7 +66,7 @@ public class ProfanityService {
     return "Profanity '" + word + "' not found in set '" + profanitySet.getName() + "'";
   }
 
-  private Profanity findProfanity(String word) {
+  public Profanity findProfanity(String word) {
     Profanity profanity = profanityRepository.findByWord(word);
     return profanity != null ? profanity : new Profanity();
   }

@@ -65,7 +65,7 @@ public class ProfanityServiceTest {
     Profanity mockProfanity = new Profanity("foobar");
     ProfanitySet testProfanitySet = new ProfanitySet("test");
     testProfanitySet.addProfanity(mockProfanity);
-    given(profanityRepository.findByWord("foobar")).willReturn(mockProfanity);
+    given(profanityService.findProfanity("foobar")).willReturn(mockProfanity);
     doNothing().when(profanityRepository).delete(mockProfanity);
     assertThat(
         profanityService.deleteProfanityFromSet("foobar", testProfanitySet),
@@ -76,7 +76,7 @@ public class ProfanityServiceTest {
   public void testDeleteProfanity_givenNonexistentProfanity_shouldReturnProfanityNotFoundMessage() {
     Profanity mockProfanity = new Profanity("foobar");
     ProfanitySet testProfanitySet = new ProfanitySet("test");
-    given(profanityRepository.findByWord("foobar")).willReturn(null);
+    given(profanityService.findProfanity("foobar")).willReturn(null);
     willThrow(DataIntegrityViolationException.class)
         .given(profanityRepository)
         .delete(mockProfanity);
