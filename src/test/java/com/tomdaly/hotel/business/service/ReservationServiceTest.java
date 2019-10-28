@@ -156,6 +156,36 @@ public class ReservationServiceTest {
 
   @Test
   public void
+  testGetRoomReservationForDate_givenNullDate_shouldReturnReservationsForTodayDate() {
+    String dateString = null;
+    LocalDate todaysDate = LocalDate.now();
+
+    List<Reservation> mockReservationList = new ArrayList<>();
+    Reservation mockReservation = new Reservation(1, 1, java.sql.Date.valueOf(todaysDate));
+    mockReservationList.add(mockReservation);
+    List<Room> mockRoomList = new ArrayList<>();
+    mockRoomList.add(createMockRoom());
+    Guest mockGuest = createMockGuest();
+
+    List<RoomReservation> expectedRoomReservationList = new ArrayList<>();
+    RoomReservation expectedRoomReservation = new RoomReservation(1, 1, todaysDate);
+    expectedRoomReservation.setRoomNumber("J1");
+    expectedRoomReservation.setRoomName("JUnit Test Room");
+    expectedRoomReservation.setFirstName("Foo");
+    expectedRoomReservation.setLastName("Bar");
+    expectedRoomReservationList.add(expectedRoomReservation);
+
+    given(reservationRepository.findByDate(java.sql.Date.valueOf(todaysDate)))
+            .willReturn(mockReservationList);
+    given(roomRepository.findAll()).willReturn(mockRoomList);
+    given(guestRepository.findById(1L)).willReturn(Optional.of(mockGuest));
+    assertThat(
+            reservationService.getRoomReservationsForDate(dateString),
+            is(equalTo(expectedRoomReservationList)));
+  }
+
+  @Test
+  public void
       testGetRoomReservationsForGuest_givenExistingGuest_shouldReturnExistingRoomReservations() {
     List<Reservation> mockReservationList = new ArrayList<>();
     mockReservationList.add(
