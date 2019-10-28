@@ -58,26 +58,22 @@ public class ReservationService {
         this.reservationRepository.findByDate(java.sql.Date.valueOf(reservationDate));
     Iterator<Room> roomIterator = rooms.iterator();
 
-    if (!roomIterator.hasNext()) {
-      return new Room();
-    }
-    Room roomToReserve = roomIterator.next();
     boolean roomFound = false;
-    do {
-      Room finalRoomToReserve = roomToReserve;
-      boolean existingReservation =
-          StreamSupport.stream(reservationsOnDate.spliterator(), false)
-              .anyMatch(room -> room.getRoomId() == finalRoomToReserve.getId());
-      if (existingReservation) {
-        if (roomIterator.hasNext()) {
-          roomToReserve = roomIterator.next();
+    Room roomToReserve = new Room();
+    while (roomIterator.hasNext() && !roomFound) {
+        roomToReserve = roomIterator.next();
+        final Room finalRoomToReserve = roomToReserve;
+        boolean existingReservation =
+            StreamSupport.stream(reservationsOnDate.spliterator(), false)
+                .anyMatch(room -> room.getRoomId() == finalRoomToReserve.getId());
+        if (existingReservation) {
+          if (!roomIterator.hasNext()) {
+            break;
+          }
         } else {
-          break;
+          roomFound = true;
         }
-      } else {
-        roomFound = true;
-      }
-    } while (!roomFound);
+    }
     if (!roomFound) {
       return new Room();
     }
