@@ -111,6 +111,7 @@ public class ProfanityServiceTest {
     List<Long> testProfanityIdsList = new ArrayList<>();
     testProfanityIdsList.add(1L);
     testProfanityIdsList.add(2L);
+    profanityService.getProfanitySets().add(testProfanitySet);
     given(profanitySetWordsRepository.findProfanityIdsByProfanitySetId(testProfanitySet.getId()))
         .willReturn(testProfanityIdsList);
     given(profanityRepository.findById(1L)).willReturn(Optional.of(testProfanityOne));
