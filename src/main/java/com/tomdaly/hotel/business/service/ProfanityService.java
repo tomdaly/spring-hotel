@@ -109,6 +109,18 @@ public class ProfanityService {
     return profanitySet;
   }
 
+  public String deleteProfanitySet(String name) {
+    ProfanitySet profanitySet = profanitySetRepository.findByName(name);
+    if (profanitySet == null) {
+      return "Could not delete profanity set '" + name + "'";
+    }
+    try {
+      this.profanitySetRepository.delete(profanitySet);
+      return "Profanity set '" + name + "' deleted";
+    } catch (DataIntegrityViolationException e) {
+      return "Could not delete profanity set '" + name + "'";
+    }
+  }
 
   public List<ProfanitySet> getProfanitySets() {
     return this.profanitySets;

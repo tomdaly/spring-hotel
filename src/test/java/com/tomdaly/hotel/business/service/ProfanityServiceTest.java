@@ -143,4 +143,18 @@ public class ProfanityServiceTest {
     ProfanitySet returnedProfanitySet = profanityService.createProfanitySet("");
     assertThat(returnedProfanitySet, is(equalTo(expectedProfanitySet)));
   }
+
+  @Test
+  public void testDeleteProfanitySet_givenExistingProfanitySet_shouldReturnDeleteSuccessMessage() {
+    ProfanitySet testProfanitySet = new ProfanitySet("test");
+    given(profanitySetRepository.findByName("test")).willReturn(testProfanitySet);
+    doNothing().when(profanitySetRepository).delete(testProfanitySet);
+    assertThat(profanityService.deleteProfanitySet("test"), is(equalTo("Profanity set 'test' deleted")));
+  }
+
+  @Test
+  public void testDeleteProfanitySet_givenNonexistentProfanitySet_shouldReturnDeleteFailedMessage() {
+    given(profanitySetRepository.findByName("test")).willReturn(null);
+    assertThat(profanityService.deleteProfanitySet("test"), is(equalTo("Could not delete profanity set 'test'")));
+  }
 }

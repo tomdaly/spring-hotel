@@ -5,4 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProfanitySetRepository extends CrudRepository<ProfanitySet, Long> {}
+public interface ProfanitySetRepository extends CrudRepository<ProfanitySet, Long> {
+    ProfanitySet findByName(String name);
+}
