@@ -110,16 +110,21 @@ public class ProfanityService {
   }
 
   public String deleteProfanitySet(String name) {
+    ProfanitySet profanitySet = findProfanitySet(name);
+    if (!profanitySet.getName().equals("")) {
+      try {
+        this.profanitySetRepository.delete(profanitySet);
+        return "Profanity set '" + name + "' deleted";
+      } catch (DataIntegrityViolationException e) {
+        return "Could not delete profanity set '" + name + "'";
+      }
+    }
+    return "Profanity set '" + name + "' not found";
+  }
+
+  private ProfanitySet findProfanitySet(String name) {
     ProfanitySet profanitySet = profanitySetRepository.findByName(name);
-    if (profanitySet == null) {
-      return "Could not delete profanity set '" + name + "'";
-    }
-    try {
-      this.profanitySetRepository.delete(profanitySet);
-      return "Profanity set '" + name + "' deleted";
-    } catch (DataIntegrityViolationException e) {
-      return "Could not delete profanity set '" + name + "'";
-    }
+    return profanitySet != null ? profanitySet : new ProfanitySet();
   }
 
   public List<ProfanitySet> getProfanitySets() {
