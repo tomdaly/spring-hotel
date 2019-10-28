@@ -60,7 +60,10 @@ public class ProfanityServiceControllerTest {
     ProfanitySet testProfanitySet = new ProfanitySet("test");
     ProfanitySet expectedProfanitySet = new ProfanitySet();
 
-    given(profanityService.getProfanitySets()).willReturn(new ArrayList<>());
+    ProfanitySet testProfanitySetTwo = new ProfanitySet("testTwo");
+    List<ProfanitySet> profanitySetList = new ArrayList<>();
+    profanitySetList.add(testProfanitySetTwo);
+    given(profanityService.getProfanitySets()).willReturn(profanitySetList);
     given(profanityService.addProfanityToSet("foobar", testProfanitySet))
         .willReturn(expectedProfanitySet);
     this.mockMvc
