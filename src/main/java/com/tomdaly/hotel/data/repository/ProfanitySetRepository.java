@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProfanitySetRepository extends CrudRepository<ProfanitySet, Long> {
-    ProfanitySet findByName(String name);
+  ProfanitySet findByName(String name);
 }

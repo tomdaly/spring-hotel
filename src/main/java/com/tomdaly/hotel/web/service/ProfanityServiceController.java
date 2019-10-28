@@ -28,7 +28,7 @@ public class ProfanityServiceController {
   }
 
   @RequestMapping(method = RequestMethod.DELETE, value = "/profanity/delete")
-  public ProfanitySet deleteProfanityFromSet(
+  public String deleteProfanityFromSet(
       @RequestParam("set") String profanitySetName, @RequestParam("word") String word) {
     ProfanitySet profanitySet;
     for (ProfanitySet profanitySetIter : profanityService.getProfanitySets()) {
@@ -36,12 +36,12 @@ public class ProfanityServiceController {
         return this.profanityService.deleteProfanityFromSet(word, profanitySet);
       }
     }
-    return new ProfanitySet();
+    return "Profanity set '" + profanitySetName + "' not found";
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/profanity/sets")
   public List<ProfanitySet> getProfanitySets() {
-      return this.profanityService.getProfanitySets();
+    return this.profanityService.getProfanitySets();
   }
 
   @RequestMapping(method = RequestMethod.POST, value = "/profanity/sets")
