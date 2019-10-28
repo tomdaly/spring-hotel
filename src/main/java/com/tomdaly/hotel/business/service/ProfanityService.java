@@ -48,18 +48,27 @@ public class ProfanityService {
   }
 
   @Loggable
-  public ProfanitySet deleteProfanityFromSet(String word, ProfanitySet profanitySet) {
-    Profanity profanity = this.profanityRepository.findByWord(word);
-    if (profanity == null) {
-      return profanitySet;
+  public String deleteProfanityFromSet(String word, ProfanitySet profanitySet) {
+    Profanity profanity = findProfanity(word);
+    if (!profanity.getWord().equals("")) {
+      try {
+        profanitySet.deleteProfanity(profanity);
+        this.profanitySetRepository.save(profanitySet);
+        return "Deleted profanity '" + word + "' from set '" + profanitySet.getName() + "'";
+      } catch (DataIntegrityViolationException e) {
+        return "Could not delete profanity '"
+            + word
+            + "' from set '"
+            + profanitySet.getName()
+            + "'";
+      }
     }
-    try {
-      profanitySet.deleteProfanity(profanity);
-      this.profanitySetRepository.save(profanitySet);
-      return profanitySet;
-    } catch (DataIntegrityViolationException e) {
-      return profanitySet;
-    }
+    return "Profanity '" + word + "' not found in set '" + profanitySet.getName() + "'";
+  }
+
+  private Profanity findProfanity(String word) {
+    Profanity profanity = profanityRepository.findByWord(word);
+    return profanity != null ? profanity : new Profanity();
   }
 
   @Loggable
@@ -109,6 +118,23 @@ public class ProfanityService {
     return profanitySet;
   }
 
+  public String deleteProfanitySet(String name) {
+    ProfanitySet profanitySet = findProfanitySet(name);
+    if (!profanitySet.getName().equals("")) {
+      try {
+        this.profanitySetRepository.delete(profanitySet);
+        return "Profanity set '" + name + "' deleted";
+      } catch (DataIntegrityViolationException e) {
+        return "Could not delete profanity set '" + name + "'";
+      }
+    }
+    return "Profanity set '" + name + "' not found";
+  }
+
+  private ProfanitySet findProfanitySet(String name) {
+    ProfanitySet profanitySet = profanitySetRepository.findByName(name);
+    return profanitySet != null ? profanitySet : new ProfanitySet();
+  }
 
   public List<ProfanitySet> getProfanitySets() {
     return this.profanitySets;
