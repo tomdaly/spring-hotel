@@ -48,4 +48,9 @@ public class ProfanityServiceController {
   public ProfanitySet createProfanitySet(@RequestParam("name") String profanitySetName) {
     return this.profanityService.createProfanitySet(profanitySetName);
   }
+
+  @RequestMapping(method = RequestMethod.DELETE, value = "/profanity/sets")
+  public String deleteProfanitySet(@RequestParam("name") String profanitySetName) {
+    return this.profanityService.deleteProfanitySet(profanitySetName);
+  }
 }
