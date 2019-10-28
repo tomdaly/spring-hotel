@@ -57,7 +57,6 @@ public class ProfanityServiceControllerTest {
   @Test
   public void testApiAddProfanityToSet_givenNewWordAndNonexistentSet_shouldReturnEmptyProfanitySet()
       throws Exception {
-    Profanity testProfanity = new Profanity("foobar");
     ProfanitySet testProfanitySet = new ProfanitySet("test");
     ProfanitySet expectedProfanitySet = new ProfanitySet();
 
@@ -77,9 +76,9 @@ public class ProfanityServiceControllerTest {
   public void
       testApiDeleteProfanityFromSet_givenExistingProfanityAndExistingSet_shouldReturnDeleteSuccessMessage()
           throws Exception {
-    Profanity testProfanityOne = new Profanity("foobar");
+    Profanity testProfanity = new Profanity("foobar");
     ProfanitySet testProfanitySet = new ProfanitySet("test");
-    testProfanitySet.addProfanity(testProfanityOne);
+    testProfanitySet.addProfanity(testProfanity);
     List<ProfanitySet> profanitySetsList = new ArrayList<>();
     profanitySetsList.add(testProfanitySet);
     given(profanityService.getProfanitySets()).willReturn(profanitySetsList);
@@ -106,6 +105,25 @@ public class ProfanityServiceControllerTest {
                 .content(buildUrlEncodedFormEntity("set", "test", "word", "foobar")))
         .andExpect(status().isOk())
         .andExpect(content().string(containsString("Profanity set 'test' not found")));
+  }
+
+  @Test
+  public void
+  testApiDeleteProfanityFromSet_givenNonexistentProfanityAndExistingSet_shouldReturnDeleteFailedMessage()
+          throws Exception {
+    ProfanitySet testProfanitySet = new ProfanitySet("test");
+    List<ProfanitySet> profanitySetsList = new ArrayList<>();
+    profanitySetsList.add(testProfanitySet);
+    given(profanityService.getProfanitySets()).willReturn(profanitySetsList);
+    given(profanityService.deleteProfanityFromSet("foobar", testProfanitySet))
+            .willReturn("Profanity 'foobar' not found in set 'test'");
+    this.mockMvc
+            .perform(
+                    delete("/api/profanity/delete")
+                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                            .content(buildUrlEncodedFormEntity("set", "test", "word", "foobar")))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Profanity 'foobar' not found in set 'test'")));
   }
 
   @Test
