@@ -102,14 +102,16 @@ public class ProfanityServiceTest {
   }
 
   @Test
-  public void testContainsProfanityInSet_givenWordMatchingProfanityAndExistingSetName_shouldReturnTrue() {
+  public void
+      testContainsProfanityInSet_givenWordMatchingProfanityAndExistingSetName_shouldReturnTrue() {
     ProfanitySet testProfanitySet = new ProfanitySet("test");
     testProfanitySet.addProfanity(new Profanity("foobar"));
     assertThat(profanityService.containsProfanityInSet("foobar", testProfanitySet), is(true));
   }
 
   @Test
-  public void testContainsProfanityInSet_givenWordNotMatchingProfanityAndExistingSetName_shouldReturnFalse() {
+  public void
+      testContainsProfanityInSet_givenWordNotMatchingProfanityAndExistingSetName_shouldReturnFalse() {
     ProfanitySet testProfanitySet = new ProfanitySet("test");
     testProfanitySet.addProfanity(new Profanity("notFoobar"));
     assertThat(profanityService.containsProfanityInSet("foobar", testProfanitySet), is(false));

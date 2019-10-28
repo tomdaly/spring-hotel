@@ -155,8 +155,7 @@ public class ReservationServiceTest {
   }
 
   @Test
-  public void
-  testGetRoomReservationForDate_givenNullDate_shouldReturnReservationsForTodayDate() {
+  public void testGetRoomReservationForDate_givenNullDate_shouldReturnReservationsForTodayDate() {
     String dateString = null;
     LocalDate todaysDate = LocalDate.now();
 
@@ -176,12 +175,12 @@ public class ReservationServiceTest {
     expectedRoomReservationList.add(expectedRoomReservation);
 
     given(reservationRepository.findByDate(java.sql.Date.valueOf(todaysDate)))
-            .willReturn(mockReservationList);
+        .willReturn(mockReservationList);
     given(roomRepository.findAll()).willReturn(mockRoomList);
     given(guestRepository.findById(1L)).willReturn(Optional.of(mockGuest));
     assertThat(
-            reservationService.getRoomReservationsForDate(dateString),
-            is(equalTo(expectedRoomReservationList)));
+        reservationService.getRoomReservationsForDate(dateString),
+        is(equalTo(expectedRoomReservationList)));
   }
 
   @Test

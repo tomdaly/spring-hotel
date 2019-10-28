@@ -61,18 +61,18 @@ public class ReservationService {
     boolean roomFound = false;
     Room roomToReserve = new Room();
     while (roomIterator.hasNext() && !roomFound) {
-        roomToReserve = roomIterator.next();
-        final Room finalRoomToReserve = roomToReserve;
-        boolean existingReservation =
-            StreamSupport.stream(reservationsOnDate.spliterator(), false)
-                .anyMatch(room -> room.getRoomId() == finalRoomToReserve.getId());
-        if (existingReservation) {
-          if (!roomIterator.hasNext()) {
-            break;
-          }
-        } else {
-          roomFound = true;
+      roomToReserve = roomIterator.next();
+      final Room finalRoomToReserve = roomToReserve;
+      boolean existingReservation =
+          StreamSupport.stream(reservationsOnDate.spliterator(), false)
+              .anyMatch(room -> room.getRoomId() == finalRoomToReserve.getId());
+      if (existingReservation) {
+        if (!roomIterator.hasNext()) {
+          break;
         }
+      } else {
+        roomFound = true;
+      }
     }
     if (!roomFound) {
       return new Room();
