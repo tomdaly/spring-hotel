@@ -22,7 +22,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ProfanityServiceTest {
@@ -62,31 +61,28 @@ public class ProfanityServiceTest {
 
   @Test
   public void
-      testDeleteProfanityFromSet_givenExistingProfanityAndExistingSet_shouldReturnSetWithoutWord() {
+      testDeleteProfanityFromSet_givenExistingProfanityAndExistingSet_shouldReturnDeleteSuccessMessage() {
     Profanity mockProfanity = new Profanity("foobar");
     ProfanitySet testProfanitySet = new ProfanitySet("test");
     testProfanitySet.addProfanity(mockProfanity);
     given(profanityRepository.findByWord("foobar")).willReturn(mockProfanity);
     doNothing().when(profanityRepository).delete(mockProfanity);
-    ProfanitySet returnedProfanitySet =
-        profanityService.deleteProfanityFromSet("foobar", testProfanitySet);
-    ProfanitySet expectedProfanitySet = new ProfanitySet("test");
-    assertThat(returnedProfanitySet, is(equalTo(expectedProfanitySet)));
+    assertThat(
+        profanityService.deleteProfanityFromSet("foobar", testProfanitySet),
+        is(equalTo("Deleted profanity 'foobar' from set 'test'")));
   }
 
   @Test
-  public void testDeleteProfanity_givenNonexistentProfanity_shouldReturnUnchangedSet() {
-    Profanity mockProfanity = new Profanity("notFoobar");
+  public void testDeleteProfanity_givenNonexistentProfanity_shouldReturnProfanityNotFoundMessage() {
+    Profanity mockProfanity = new Profanity("foobar");
     ProfanitySet testProfanitySet = new ProfanitySet("test");
-    testProfanitySet.addProfanity(mockProfanity);
     given(profanityRepository.findByWord("foobar")).willReturn(null);
     willThrow(DataIntegrityViolationException.class)
         .given(profanityRepository)
         .delete(mockProfanity);
-    ProfanitySet returnedProfanitySet =
-        profanityService.deleteProfanityFromSet("foobar", testProfanitySet);
-    ProfanitySet expectedProfanitySet = testProfanitySet;
-    assertThat(returnedProfanitySet, is(equalTo(expectedProfanitySet)));
+    assertThat(
+        profanityService.deleteProfanityFromSet("foobar", testProfanitySet),
+        is(equalTo("Profanity 'foobar' not found in set 'test'")));
   }
 
   @Test
@@ -149,13 +145,15 @@ public class ProfanityServiceTest {
     ProfanitySet testProfanitySet = new ProfanitySet("test");
     given(profanitySetRepository.findByName("test")).willReturn(testProfanitySet);
     doNothing().when(profanitySetRepository).delete(testProfanitySet);
-    assertThat(profanityService.deleteProfanitySet("test"), is(equalTo("Profanity set 'test' deleted")));
+    assertThat(
+        profanityService.deleteProfanitySet("test"), is(equalTo("Profanity set 'test' deleted")));
   }
 
   @Test
   public void testDeleteProfanitySet_givenNonexistentProfanitySet_shouldReturnNotFoundMessage() {
     given(profanitySetRepository.findByName("test")).willReturn(null);
-    assertThat(profanityService.deleteProfanitySet("test"), is(equalTo("Profanity set 'test' not found")));
+    assertThat(
+        profanityService.deleteProfanitySet("test"), is(equalTo("Profanity set 'test' not found")));
   }
 
   @Test
@@ -163,8 +161,9 @@ public class ProfanityServiceTest {
     ProfanitySet testProfanitySet = new ProfanitySet("invalid");
     given(profanitySetRepository.findByName("test")).willReturn(null);
     willThrow(DataIntegrityViolationException.class)
-            .given(profanitySetRepository)
-            .delete(testProfanitySet);
-    assertThat(profanityService.deleteProfanitySet("test"), is(equalTo("Profanity set 'test' not found")));
+        .given(profanitySetRepository)
+        .delete(testProfanitySet);
+    assertThat(
+        profanityService.deleteProfanitySet("test"), is(equalTo("Profanity set 'test' not found")));
   }
 }
