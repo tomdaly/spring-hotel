@@ -74,15 +74,23 @@ public class ProfanityServiceTest {
 
   @Test
   public void testDeleteProfanity_givenNonexistentProfanity_shouldReturnProfanityNotFoundMessage() {
-    Profanity mockProfanity = new Profanity("foobar");
     ProfanitySet testProfanitySet = new ProfanitySet("test");
     given(profanityService.findProfanity("foobar")).willReturn(null);
-    willThrow(DataIntegrityViolationException.class)
-        .given(profanityRepository)
-        .delete(mockProfanity);
     assertThat(
         profanityService.deleteProfanityFromSet("foobar", testProfanitySet),
         is(equalTo("Profanity 'foobar' not found in set 'test'")));
+  }
+
+  @Test
+  public void testDeleteProfanity_givenExistingProfanityAndInvalidSet_shouldReturnProfanityNotFoundMessage() {
+    ProfanitySet testProfanitySet = new ProfanitySet("test");
+    given(profanityService.findProfanity("foobar")).willReturn(new Profanity("foobar"));
+    willThrow(DataIntegrityViolationException.class)
+            .given(profanitySetRepository)
+            .save(testProfanitySet);
+    assertThat(
+            profanityService.deleteProfanityFromSet("foobar", testProfanitySet),
+            is(equalTo("Could not delete profanity 'foobar' from set 'test'")));
   }
 
   @Test
@@ -177,12 +185,12 @@ public class ProfanityServiceTest {
 
   @Test
   public void testDeleteProfanitySet_givenInvalidProfanitySet_shouldReturnDeleteFailedMessage() {
-    ProfanitySet emptyProfanitySet = new ProfanitySet("");
-    given(profanityService.findProfanitySet("test")).willReturn(emptyProfanitySet);
+    ProfanitySet testProfanitySet = new ProfanitySet("invalid");
+    given(profanityService.findProfanitySet("test")).willReturn(testProfanitySet);
     willThrow(DataIntegrityViolationException.class)
         .given(profanitySetRepository)
-        .delete(emptyProfanitySet);
+        .delete(testProfanitySet);
     assertThat(
-        profanityService.deleteProfanitySet("test"), is(equalTo("Profanity set 'test' not found")));
+        profanityService.deleteProfanitySet("test"), is(equalTo("Could not delete profanity set 'test'")));
   }
 }
